@@ -1,0 +1,58 @@
+{
+  "name": "legendarydrew/laravel-siteimage",
+  "description": "Laravel package for local environment friendly managing of cloud-hosted images.",
+  "keywords": [
+    "legendarydrew",
+    "laravel-siteimage"
+  ],
+  "homepage": "https://github.com/legendarydrew/laravel-siteimage",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Drew Maughan",
+      "email": "drew@pzlabs.co",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.3|^8.0",
+    "ext-json": "^1.7",
+    "cloudinary/cloudinary_php": "^2.6",
+    "illuminate/support": "^8.80",
+    "intervention/image": "^2.7",
+    "jrm2k6/cloudder": "^0.6.0",
+    "legendarydrew/http-constants": "dev-master"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^6.0",
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "PZL\\SiteImage\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PZL\\SiteImage\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "PZL\\SiteImage\\SiteImageServiceProvider"
+      ],
+      "aliases": {
+        "SiteImage": "PZL\\SiteImage\\SiteImageHostInterface"
+      }
+    }
+  }
+}
