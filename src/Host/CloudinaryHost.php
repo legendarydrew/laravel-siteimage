@@ -5,17 +5,18 @@
 
 namespace PZL\SiteImage\Host;
 
-use Cloudder;
-use Cloudinary\Api\Error;
-use Cloudinary\Api\GeneralError;
-use Cloudinary\Api\Response;
+use Cloudinary\Api\Exception\GeneralError;
 use Exception;
+use Illuminate\Http\Response;
+use JD\Cloudder\Facades\Cloudder;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\ImageFormat;
 use PZL\SiteImage\SiteImageHost;
 
 /**
  * CloudinaryImage.
+ *
+ * @todo update this service to directly use the Cloudinary package, as Cloudder was abandoned.
  */
 class CloudinaryHost extends SiteImageHost
 {

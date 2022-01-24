@@ -2,8 +2,11 @@
 
 namespace PZL\SiteImage\Tests;
 
+use Cloudinary\Cloudinary;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
+use Intervention\Image\ImageServiceProvider;
+use JD\Cloudder\CloudderServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -49,7 +52,9 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            'Intervention\Image\ImageServiceProvider',
+            Cloudinary::class,
+            CloudderServiceProvider::class,
+            ImageServiceProvider::class
         ];
     }
 
