@@ -19,7 +19,6 @@
     "php": "^7.3|^8.0",
     "ext-json": "^1.7",
     "cloudinary/cloudinary_php": "^2.6",
-    "illuminate/support": "^8.80",
     "intervention/image": "^2.7",
     "jrm2k6/cloudder": "^0.6.0",
     "legendarydrew/http-constants": "dev-master"
