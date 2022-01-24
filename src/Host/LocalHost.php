@@ -192,7 +192,15 @@ class LocalHost extends SiteImageHost
      */
     protected function transformPlaceholder(string $transformation = null): string
     {
-        return $this->transform(public_path('img/ph/placeholder.png'), $transformation);
+        $png_placeholder = public_path('img/ph/placeholder.png');
+        $jpg_placeholder = public_path('img/ph/placeholder.jpg');
+        if ( file_exists($jpg_placeholder) ) {
+            return $this->transform($jpg_placeholder, $transformation);
+        } else if ( file_exists($png_placeholder) ) {
+            return $this->transform($png_placeholder, $transformation);
+        }
+
+        return '';
     }
 
     /**
