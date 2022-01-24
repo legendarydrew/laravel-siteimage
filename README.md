@@ -1,10 +1,11 @@
-# Very short description of the package
+# Site Image package
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/legendarydrew/laravel-siteimage.svg?style=flat-square)](https://packagist.org/packages/legendarydrew/laravel-siteimage)
 [![Total Downloads](https://img.shields.io/packagist/dt/legendarydrew/laravel-siteimage.svg?style=flat-square)](https://packagist.org/packages/legendarydrew/laravel-siteimage)
-![GitHub Actions](https://github.com/legendarydrew/laravel-siteimage/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+A package for managing cloud-hosted images in a Laravel project.
+
+This was developed to allow local mimicking of Cloudinary-hosted images, instead of using precious (and probably expensive) server bandwidth during development.
 
 ## Installation
 
@@ -14,10 +15,35 @@ You can install the package via composer:
 composer require legendarydrew/laravel-siteimage
 ```
 
+**Copy configuration file**
+```php
+php artisan vendor:publish --provider="PZL\SiteImage\SiteImageServiceProvider" --tag="config"
+```
+
+**Copy placeholder images (for missing images)**
+```php
+php artisan vendor:publish --provider="PZL\SiteImage\SiteImageServiceProvider" --tag="assets"
+```
+(or create your own!)
+
+**Environment variables**
+
+`SITE_IMAGE_PROVIDER`
+
+LocalImage (default) or CloudinaryImage.
+
+`SITE_IMAGE_LOCAL_FOLDER`
+
+The folder where locally-hosted images are stored, relative to the `public` folder (default 'img').
+
 ## Usage
 
 ```php
-// Usage description here
+SiteImage::get($image_id[, $transformation, $format])
+SiteImage::approve($image_id)
+SiteImage::reject($image_id)
+SiteImage::destroy($image_id)
+...
 ```
 
 ### Testing
@@ -41,7 +67,6 @@ If you discover any security related issues, please email drew@pzlabs.co instead
 ## Credits
 
 -   [Drew Maughan](https://github.com/legendarydrew)
--   [All Contributors](../../contributors)
 
 ## License
 

@@ -20,7 +20,9 @@ class SiteImageServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole())
         {
             $this->publishes([
-                __DIR__ . '/../config/site-images.php' => config_path('site-images.php'),
+                __DIR__ . '/../config/site-images.php' => config_path('site-images.php')
+            ], 'config');
+            $this->publishes([
                 __DIR__.'/../resources/assets' => public_path('img/ph'),
             ], 'assets');
         }
