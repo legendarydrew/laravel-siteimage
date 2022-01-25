@@ -2,11 +2,11 @@
 
 namespace PZL\SiteImage\Tests;
 
-use Cloudinary\Cloudinary;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
 use Intervention\Image\ImageServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use PZL\SiteImage\SiteImageServiceProvider;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -21,27 +21,29 @@ abstract class TestCase extends BaseTestCase
     /**
      * Define environment setup.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      * @return void
      */
     protected function defineEnvironment($app)
     {
-        $app['config']->set('site-images.local', [
-            'folder' => 'test!'
-        ]);
-        $app['config']->set('site-images.cloudinary', [
-            'cloudName' => 'test!',
-            'apiKey'    => 'damn',
-            'apiSecret' => 'what-the',
-            'scaling'   => []
-        ]);
-        $app['config']->set('site-images.transformations', [
-            'thumbnail' => [
-                'width'         => 100,
-                'height'        => 100,
-                'crop'          => 'thumb',
-                'gravity'       => 'face:center',
-                'default_image' => 'placeholder.png'
+        $app['config']->set('site-images', [
+            'local'           => [
+                'folder' => 'test!'
+            ],
+            'cloudinary'      => [
+                'cloudName' => 'test!',
+                'apiKey'    => 'damn',
+                'apiSecret' => 'what-the',
+                'scaling'   => []
+            ],
+            'transformations' => [
+                'thumbnail' => [
+                    'width'         => 100,
+                    'height'        => 100,
+                    'crop'          => 'thumb',
+                    'gravity'       => 'face:center',
+                    'default_image' => 'placeholder.png'
+                ]
             ]
         ]);
     }
@@ -56,8 +58,8 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-//            Cloudinary::class,
-//            ImageServiceProvider::class
+            SiteImageServiceProvider::class,
+            ImageServiceProvider::class
         ];
     }
 

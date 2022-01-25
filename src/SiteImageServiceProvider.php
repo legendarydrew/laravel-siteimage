@@ -10,6 +10,7 @@ use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
 use Illuminate\Support\ServiceProvider;
+use PZL\SiteImage\Facades\SiteImageFacade;
 
 /**
  * SiteImageServiceProvider.
@@ -39,18 +40,26 @@ class SiteImageServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Register the SiteImageHost to be used for images, as defined in the configuration.
         $this->app->singleton(
             'pzl.site-image.host',
             function ()
             {
-                $providerClass = 'PZL\\SiteImage\\Host\\' . config('images.provider');
+                $providerClass = 'PZL\\SiteImage\\Host\\' . config('site-images.provider');
 
                 return new $providerClass();
             }
         );
 
+        // Register CloudinaryWrapper as a singleton.
+        // TODO can we do this conditionally?
         $this->app->singleton('pzl.site-image.cloudinary', function ($app) {
             return new CloudinaryWrapper();
+        });
+
+        // Register the SiteImage facade.
+        $this->app->bind('site-image', function($app) {
+            return new SiteImageFacade();
         });
 
     }
@@ -60,6 +69,6 @@ class SiteImageServiceProvider extends ServiceProvider
      */
     public function provides(): array
     {
-        return ['pzl.site-image-host'];
+        return ['pzl.site-image.host'];
     }
 }

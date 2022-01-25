@@ -4,8 +4,9 @@ namespace PZL\SiteImage\Tests\CloudinaryHost;
 
 
 use Illuminate\Foundation\Testing\WithFaker;
-use JD\Cloudder\Facades\Cloudder;
+use Mockery;
 use PZL\Http\ResponseCode;
+use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\Host\CloudinaryHost;
 use PZL\SiteImage\Host\LocalHost;
 use PZL\SiteImage\ImageFormat;
@@ -26,16 +27,25 @@ class GetTest extends TestCase
      */
     private $image;
 
+    /**
+     * @var string
+     */
+    private $placeholder;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->provider = new CloudinaryHost();
+        $this->provider = Mockery::mock(CloudinaryHost::class)->makePartial();
+        $this->wrapper = Mockery::mock(CloudinaryWrapper::class);
         $this->image = $this->faker->imageUrl;
         $this->placeholder = $this->faker->imageUrl;
 
-        Cloudder::shouldReceive('show')->withArgs([$this->image])->andReturn($this->image);
-        Cloudder::shouldReceive('show')->withArgs([ResponseCode::RESPONSE_NOT_FOUND])->andReturn($this->placeholder);
+        $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);
+        $this->wrapper->shouldReceive('show')->andReturnUsing(function($arg)
+        {
+            return $arg === (string)ResponseCode::RESPONSE_NOT_FOUND ? $this->placeholder : $this->image;
+        });
     }
 
     public function testWithoutTransformation()
