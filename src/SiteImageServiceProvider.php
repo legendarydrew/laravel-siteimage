@@ -5,6 +5,10 @@
 
 namespace PZL\SiteImage;
 
+use Cloudinary\Api\Admin\AdminApi;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -36,7 +40,7 @@ class SiteImageServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(
-            'pzl.site-image-host',
+            'pzl.site-image.host',
             function ()
             {
                 $providerClass = 'PZL\\SiteImage\\Host\\' . config('images.provider');
@@ -44,6 +48,11 @@ class SiteImageServiceProvider extends ServiceProvider
                 return new $providerClass();
             }
         );
+
+        $this->app->singleton('pzl.site-image.cloudinary', function ($app) {
+            return new CloudinaryWrapper();
+        });
+
     }
 
     /**

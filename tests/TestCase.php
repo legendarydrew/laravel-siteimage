@@ -6,7 +6,6 @@ use Cloudinary\Cloudinary;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
 use Intervention\Image\ImageServiceProvider;
-use JD\Cloudder\CloudderServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -27,9 +26,14 @@ abstract class TestCase extends BaseTestCase
      */
     protected function defineEnvironment($app)
     {
-        // Setup default database to use sqlite :memory:
         $app['config']->set('site-images.local', [
             'folder' => 'test!'
+        ]);
+        $app['config']->set('site-images.cloudinary', [
+            'cloudName' => 'test!',
+            'apiKey'    => 'damn',
+            'apiSecret' => 'what-the',
+            'scaling'   => []
         ]);
         $app['config']->set('site-images.transformations', [
             'thumbnail' => [
@@ -52,9 +56,8 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            Cloudinary::class,
-            CloudderServiceProvider::class,
-            ImageServiceProvider::class
+//            Cloudinary::class,
+//            ImageServiceProvider::class
         ];
     }
 
