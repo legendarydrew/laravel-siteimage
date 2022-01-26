@@ -5,20 +5,37 @@
 
 namespace PZL\SiteImage\Host;
 
-use Cloudder;
-use Cloudinary\Api\Error;
-use Cloudinary\Api\GeneralError;
-use Cloudinary\Api\Response;
+use Cloudinary\Api\Exception\ApiError;
+use Cloudinary\Api\Exception\GeneralError;
+use Cloudinary\Exception\Error;
 use Exception;
+use Illuminate\Http\Response;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\ImageFormat;
 use PZL\SiteImage\SiteImageHost;
+use PZL\SiteImage\CloudinaryWrapper;
 
 /**
  * CloudinaryImage.
  */
 class CloudinaryHost extends SiteImageHost
 {
+    /**
+     * @var CloudinaryWrapper
+     */
+    private $wrapper;
+
+
+    public function __construct()
+    {
+        $this->wrapper = new CloudinaryWrapper();
+    }
+
+    public function getCloudinaryWrapper(): CloudinaryWrapper
+    {
+        return $this->wrapper;
+    }
+
     /**
      * buildTransformations()
      * Build images transformations based on our configuration.
@@ -27,7 +44,7 @@ class CloudinaryHost extends SiteImageHost
      */
     public function buildTransformations(): void
     {
-        $api = Cloudder::getApi();
+        $api = $this->getCloudinaryWrapper()->getApi();
 
         // Upload our placeholder image.
         $this->uploadPlaceholderImage();
@@ -37,10 +54,10 @@ class CloudinaryHost extends SiteImageHost
         foreach ($transformations as $name => $settings) {
             try {
                 // Attempt to UPDATE an existing transformation.
-                $api->update_transformation($name, ['allowed_for_strict' => 1], $settings);
+                $api->updateTransformation($name, ['allowed_for_strict' => 1], $settings);
             } catch (Exception $e) {
                 // Attempt to CREATE the transformation.
-                $api->create_transformation($name, $settings, ['allowed_for_strict' => 1]);
+                $api->createTransformation($name, $settings, ['allowed_for_strict' => 1]);
             }
         }
     }
@@ -62,14 +79,20 @@ class CloudinaryHost extends SiteImageHost
         $this->upload($placeholder_image, null, 'placeholder');
     }
 
-    public function get(string $image_id, ?string $transformation, string $format = ImageFormat::JPEG): string
+    /**
+     * @param string      $image_id
+     * @param string|null $transformation
+     * @param string      $format
+     * @return string
+     */
+    public function get(string $image_id, string $transformation = null, string $format = ImageFormat::JPEG): string
     {
         $parameters = [
             'format' => $format,
             'transformation' => $transformation,
         ];
 
-        return Cloudder::show($image_id, $parameters);
+        return $this->getCloudinaryWrapper()->show($image_id, $parameters);
     }
 
     /**
@@ -89,7 +112,7 @@ class CloudinaryHost extends SiteImageHost
         }
 
         // Upload the image!
-        $wrapper = Cloudder::upload($image_filename, $cloud_name, $tags, $parameters);
+        $wrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $tags, $parameters);
 
         // Return the public ID of the image.
         return $wrapper->getPublicId();
@@ -109,26 +132,32 @@ class CloudinaryHost extends SiteImageHost
     }
 
     /**
-     * @throws GeneralError
+     * @param string $image_id
+     * @return array
      */
-    public function approve(string $image_id): Response
+    public function approve(string $image_id): array
     {
-        return Cloudder::getApi()
-                       ->update($image_id, ['moderation_status' => 'approved']);
+        return $this->getCloudinaryWrapper()->getApi()
+                       ->update($image_id, ['moderation_status' => 'approved'])->getArrayCopy();
     }
 
     /**
-     * @throws GeneralError
+     * @param string $image_id
+     * @return array
      */
-    public function reject(string $image_id): Response
+    public function reject(string $image_id): array
     {
-        return Cloudder::getApi()
-                       ->update($image_id, ['moderation_status' => 'rejected']);
+        return $this->getCloudinaryWrapper()->getApi()
+                       ->update($image_id, ['moderation_status' => 'rejected'])->getArrayCopy();
     }
 
+    /**
+     * @param string $image_id
+     * @return bool
+     */
     public function destroy(string $image_id): bool
     {
-        $output = Cloudder::destroyImage($image_id, ['invalidate' => true]);
+        $output = $this->getCloudinaryWrapper()->destroyImage($image_id, ['invalidate' => true]);
 
         return 'ok' === $output['result'];
     }
@@ -150,8 +179,8 @@ class CloudinaryHost extends SiteImageHost
 
         try {
             do {
-                $response = Cloudder::getApi()
-                                    ->resources_by_tag($tag, $params);
+                $response = $this->getCloudinaryWrapper()->getApi()
+                                    ->assetsByTag($tag, $params);
                 $rows += $response['resources'];
 
                 if (property_exists($response, 'next_cursor')) {
@@ -170,6 +199,7 @@ class CloudinaryHost extends SiteImageHost
 
     /**
      * @throws GeneralError
+     * @throws ApiError
      */
     public function destroyAll(string $tag = null)
     {
@@ -181,7 +211,7 @@ class CloudinaryHost extends SiteImageHost
         ];
         $public_ids = [];
         do {
-            $response = Cloudder::getApi()->resources($params);
+            $response = $this->getCloudinaryWrapper()->getApi()->assets($params);
 
             // Make a list of public IDs. If a tag was specified, we only include images with that tag.
             foreach ($response['resources'] as $row) {
@@ -200,8 +230,8 @@ class CloudinaryHost extends SiteImageHost
         // Delete the images in batches of 100 (a limitation of the Cloudinary API).
         $chunks = array_chunk($public_ids, 100);
         foreach ($chunks as $chunk) {
-            Cloudder::getApi()
-                    ->delete_resources($chunk);
+            $this->getCloudinaryWrapper()->getApi()
+                    ->deleteAssets($chunk);
         }
     }
 }

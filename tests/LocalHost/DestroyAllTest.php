@@ -6,6 +6,7 @@
 namespace PZL\SiteImage\Tests\LocalHost;
 
 use Illuminate\Filesystem\Filesystem;
+use Intervention\Image\Facades\Image;
 use PZL\SiteImage\Host\LocalHost;
 use PZL\SiteImage\Tests\TestCase;
 

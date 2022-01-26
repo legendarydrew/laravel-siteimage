@@ -20,7 +20,6 @@
     "ext-json": "^1.7",
     "cloudinary/cloudinary_php": "^2.6",
     "intervention/image": "^2.7",
-    "jrm2k6/cloudder": "^0.6.0",
     "legendarydrew/http-constants": "dev-master"
   },
   "require-dev": {
