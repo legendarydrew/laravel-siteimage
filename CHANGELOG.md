@@ -5,6 +5,7 @@ All notable changes to `laravel-siteimage` will be documented in this file.
 ## 1.0.4 - 2022-01-27
 
 - renamed host classes.
+- SiteImage::get() can be called with a null image ID.
 
 ## 1.0.3 - 2022-01-26
 

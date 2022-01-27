@@ -83,6 +83,26 @@ class GetTest extends TestCase
         }
     }
 
+    public function testNoImageWithJPGPlaceholder()
+    {
+        @mkdir(public_path('img/ph'), 0755, TRUE);
+        copy(__DIR__ . '/../../resources/assets/placeholder.jpg', public_path('img/ph/placeholder.jpg'));
+        $url = $this->provider->get(null);
+        self::assertIsURL($url);
+        self::assertEquals(asset('img/ph/placeholder.jpg'), $url);
+        unlink(public_path('img/ph/placeholder.jpg'));
+    }
+
+    public function testNoImageWithPNGPlaceholder()
+    {
+        @mkdir(public_path('img/ph'), 0755, TRUE);
+        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path('img/ph/placeholder.png'));
+        $url = $this->provider->get(null);
+        self::assertIsURL($url);
+        self::assertEquals(asset('img/ph/placeholder.png'), $url);
+        unlink(public_path('img/ph/placeholder.png'));
+    }
+
     public function testInvalidImageWithJPGPlaceholder()
     {
         @mkdir(public_path('img/ph'), 0755, TRUE);

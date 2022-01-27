@@ -9,12 +9,13 @@ interface SiteImageHostInterface
 {
     /**
      * Returns the URL of the specified cloud-hosted image.
-     * @param string $image_id
-     * @param string $transformation
-     * @param string $format
+     *
+     * @param string|null $image_id
+     * @param string|null $transformation
+     * @param string      $format
      * @return string
      */
-    public function get(string $image_id, string $transformation, string $format = SiteImageFormat::JPEG): string;
+    public function get(?string $image_id, ?string $transformation, string $format = SiteImageFormat::JPEG): string;
 
     /**
      * Approve a specific image for use.

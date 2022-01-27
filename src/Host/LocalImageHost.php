@@ -20,15 +20,19 @@ class LocalImageHost extends SiteImageHost
 {
     private const TAG_FILE = 'tags.json';
 
-    public function get(string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
+    public function get(?string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
-        $file = $this->getFolder() . $image_id;
-        try {
-            return $this->transform($file, $transformation, $format);
-        } catch (NotReadableException $e) {
-            // Return the [transformed] placeholder image.
-            return $this->transformPlaceholder($transformation);
+        if ($image_id) {
+            $file = $this->getFolder() . $image_id;
+            try {
+                return $this->transform($file, $transformation, $format);
+            } catch (NotReadableException $e) {
+                // Return the [transformed] placeholder image.
+                return $this->transformPlaceholder($transformation);
+            }
         }
+
+        return $this->transformPlaceholder($transformation);
     }
 
     public function approve(string $image_id)
