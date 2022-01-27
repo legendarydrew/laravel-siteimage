@@ -1,11 +1,11 @@
 <?php
 
-namespace PZL\SiteImage\Tests\LocalHost;
+namespace PZL\SiteImage\Tests\LocalImageHost;
 
 
 use PZL\SiteImage\Tests\TestCase;
 
-class UploadForModerationTest extends TestCase
+class TaggedTest extends TestCase
 {
 
     public function testToBeImplemented()

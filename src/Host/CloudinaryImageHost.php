@@ -7,18 +7,16 @@ namespace PZL\SiteImage\Host;
 
 use Cloudinary\Api\Exception\ApiError;
 use Cloudinary\Api\Exception\GeneralError;
-use Cloudinary\Exception\Error;
 use Exception;
-use Illuminate\Http\Response;
 use PZL\Http\ResponseCode;
-use PZL\SiteImage\ImageFormat;
+use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\CloudinaryWrapper;
 
 /**
  * CloudinaryImage.
  */
-class CloudinaryHost extends SiteImageHost
+class CloudinaryImageHost extends SiteImageHost
 {
     /**
      * @var CloudinaryWrapper
@@ -54,10 +52,11 @@ class CloudinaryHost extends SiteImageHost
         foreach ($transformations as $name => $settings) {
             try {
                 // Attempt to UPDATE an existing transformation.
-                $api->updateTransformation($name, ['allowed_for_strict' => 1], $settings);
+                $settings['allowed_for_strict'] = 1;
+                $api->updateTransformation($name, $settings);
             } catch (Exception $e) {
                 // Attempt to CREATE the transformation.
-                $api->createTransformation($name, $settings, ['allowed_for_strict' => 1]);
+                $api->createTransformation($name, $settings);
             }
         }
     }
@@ -79,13 +78,7 @@ class CloudinaryHost extends SiteImageHost
         $this->upload($placeholder_image, null, 'placeholder');
     }
 
-    /**
-     * @param string      $image_id
-     * @param string|null $transformation
-     * @param string      $format
-     * @return string
-     */
-    public function get(string $image_id, string $transformation = null, string $format = ImageFormat::JPEG): string
+    public function get(?string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         $parameters = [
             'format' => $format,
@@ -177,22 +170,16 @@ class CloudinaryHost extends SiteImageHost
         ];
         $rows = [];
 
-        try {
-            do {
-                $response = $this->getCloudinaryWrapper()->getApi()
-                                    ->assetsByTag($tag, $params);
-                $rows += $response['resources'];
+        do {
+            $response = $this->getCloudinaryWrapper()->getApi()->assetsByTag($tag, $params);
+            $rows += $response['resources'];
 
-                if (property_exists($response, 'next_cursor')) {
-                    $params['next_cursor'] = $response['next_cursor'];
-                } else {
-                    break;
-                }
-            } while (true);
-        } catch (Error $error) {
-            $error_message = sprintf('Cloudinary error: [%u] %s', $error->getCode(), $error->getMessage());
-            abort(ResponseCode::RESPONSE_INTERNAL_SERVER_ERROR, $error_message);
-        }
+            if (property_exists($response, 'next_cursor')) {
+                $params['next_cursor'] = $response['next_cursor'];
+            } else {
+                break;
+            }
+        } while (true);
 
         return $rows;
     }

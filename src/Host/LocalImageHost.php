@@ -8,7 +8,7 @@ namespace PZL\SiteImage\Host;
 use Illuminate\Filesystem\Filesystem;
 use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
-use PZL\SiteImage\ImageFormat;
+use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
 
 /**
@@ -16,19 +16,23 @@ use PZL\SiteImage\SiteImageHost;
  * This class is intended for hosting images locally: primarily used for development
  * and to avoid "polluting" cloud hosting.
  */
-class LocalHost extends SiteImageHost
+class LocalImageHost extends SiteImageHost
 {
     private const TAG_FILE = 'tags.json';
 
-    public function get(string $image_id, string $transformation = null, string $format = ImageFormat::JPEG): string
+    public function get(?string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
-        $file = $this->getFolder() . $image_id;
-        try {
-            return $this->transform($file, $transformation, $format);
-        } catch (NotReadableException $e) {
-            // Return the [transformed] placeholder image.
-            return $this->transformPlaceholder($transformation);
+        if ($image_id) {
+            $file = $this->getFolder() . $image_id;
+            try {
+                return $this->transform($file, $transformation, $format);
+            } catch (NotReadableException $e) {
+                // Return the [transformed] placeholder image.
+                return $this->transformPlaceholder($transformation);
+            }
         }
+
+        return $this->transformPlaceholder($transformation);
     }
 
     public function approve(string $image_id)
@@ -163,7 +167,7 @@ class LocalHost extends SiteImageHost
      * @param string $format
      * @return string
      */
-    protected function transform(string $image_file, string $transformation = null, string $format = ImageFormat::JPEG): string
+    protected function transform(string $image_file, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         // Load the image (and check whether it is an image).
         $image = Image::make($image_file);

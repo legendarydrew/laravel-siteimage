@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'provider' => env('SITE_IMAGE_PROVIDER', 'LocalImage'),
+    'provider' => env('SITE_IMAGE_PROVIDER', 'LocalImageHost'),
 
     'local'           => [
         'folder' => env('SITE_IMAGE_LOCAL_FOLDER', 'img'),

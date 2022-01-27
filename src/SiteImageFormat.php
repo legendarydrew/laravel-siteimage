@@ -11,7 +11,7 @@ use ReflectionException;
 /**
  * ImageFormat enum.
  */
-abstract class ImageFormat
+abstract class SiteImageFormat
 {
     public const JPEG = 'jpg';
     public const PNG = 'png';
