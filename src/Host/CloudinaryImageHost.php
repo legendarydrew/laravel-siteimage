@@ -114,7 +114,7 @@ class CloudinaryImageHost extends SiteImageHost
     /**
      * @throws Exception
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, ?string $cloud_name, array $tags = [], array $transformations = [])
+    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [])
     {
         $parameters = [
             'folder'     => $cloud_folder,

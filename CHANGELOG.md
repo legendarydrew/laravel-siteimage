@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
+## 1.0.5 - 2022-01-27
+
+- completed test suites for LocalImageHost.
+- 
 ## 1.0.4 - 2022-01-27
 
 - renamed host classes.
