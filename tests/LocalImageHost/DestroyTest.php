@@ -1,16 +1,16 @@
 <?php
 
-namespace PZL\SiteImage\Tests\LocalHost;
+namespace PZL\SiteImage\Tests\LocalImageHost;
 
 
 use Illuminate\Filesystem\Filesystem;
-use PZL\SiteImage\Host\LocalHost;
+use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
 class DestroyTest extends TestCase
 {
     /**
-     * @var LocalHost
+     * @var LocalImageHost
      */
     private $provider;
 
@@ -20,7 +20,7 @@ class DestroyTest extends TestCase
     {
         parent::setUp();
 
-        $this->provider = new LocalHost();
+        $this->provider = new LocalImageHost();
         $this->image = $this->faker->image;
 
         $fs = new Filesystem();

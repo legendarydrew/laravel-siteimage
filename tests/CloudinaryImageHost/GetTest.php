@@ -1,15 +1,15 @@
 <?php
 
-namespace PZL\SiteImage\Tests\CloudinaryHost;
+namespace PZL\SiteImage\Tests\CloudinaryImageHost;
 
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\CloudinaryWrapper;
-use PZL\SiteImage\Host\CloudinaryHost;
-use PZL\SiteImage\Host\LocalHost;
-use PZL\SiteImage\ImageFormat;
+use PZL\SiteImage\Host\CloudinaryImageHost;
+use PZL\SiteImage\Host\LocalImageHost;
+use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\Tests\TestCase;
 use ReflectionException;
 
@@ -18,7 +18,7 @@ class GetTest extends TestCase
     use WithFaker;
 
     /**
-     * @var LocalHost
+     * @var LocalImageHost
      */
     private $provider;
 
@@ -36,7 +36,7 @@ class GetTest extends TestCase
     {
         parent::setUp();
 
-        $this->provider = Mockery::mock(CloudinaryHost::class)->makePartial();
+        $this->provider = Mockery::mock(CloudinaryImageHost::class)->makePartial();
         $this->wrapper = Mockery::mock(CloudinaryWrapper::class);
         $this->image = $this->faker->imageUrl;
         $this->placeholder = $this->faker->imageUrl;
@@ -71,7 +71,7 @@ class GetTest extends TestCase
      */
     public function testAsFormat()
     {
-        $formats = ImageFormat::values();
+        $formats = SiteImageFormat::values();
 
         foreach ($formats as $format)
         {

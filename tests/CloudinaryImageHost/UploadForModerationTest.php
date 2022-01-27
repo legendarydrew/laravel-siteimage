@@ -1,11 +1,11 @@
 <?php
 
-namespace PZL\SiteImage\Tests\CloudinaryHost;
+namespace PZL\SiteImage\Tests\CloudinaryImageHost;
 
 
 use PZL\SiteImage\Tests\TestCase;
 
-class DestroyTest extends TestCase
+class UploadForModerationTest extends TestCase
 {
 
     public function testToBeImplemented()

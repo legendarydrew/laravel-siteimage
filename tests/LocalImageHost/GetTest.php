@@ -3,13 +3,13 @@
  * Copyright (c) 2022 Perfect Zero Labs.
  */
 
-namespace PZL\SiteImage\Tests\LocalHost;
+namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\WithFaker;
 use PZL\Http\ResponseCode;
-use PZL\SiteImage\Host\LocalHost;
-use PZL\SiteImage\ImageFormat;
+use PZL\SiteImage\Host\LocalImageHost;
+use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\Tests\TestCase;
 use ReflectionException;
 
@@ -21,7 +21,7 @@ class GetTest extends TestCase
     use WithFaker;
 
     /**
-     * @var LocalHost
+     * @var LocalImageHost
      */
     private $provider;
 
@@ -34,7 +34,7 @@ class GetTest extends TestCase
     {
         parent::setUp();
 
-        $this->provider = new LocalHost();
+        $this->provider = new LocalImageHost();
         $fs             = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
 
@@ -72,7 +72,7 @@ class GetTest extends TestCase
      */
     public function testAsFormat()
     {
-        $formats = ImageFormat::values();
+        $formats = SiteImageFormat::values();
 
         foreach ($formats as $format)
         {

@@ -11,14 +11,14 @@ use Cloudinary\Exception\Error;
 use Exception;
 use Illuminate\Http\Response;
 use PZL\Http\ResponseCode;
-use PZL\SiteImage\ImageFormat;
+use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\CloudinaryWrapper;
 
 /**
  * CloudinaryImage.
  */
-class CloudinaryHost extends SiteImageHost
+class CloudinaryImageHost extends SiteImageHost
 {
     /**
      * @var CloudinaryWrapper
@@ -85,7 +85,7 @@ class CloudinaryHost extends SiteImageHost
      * @param string      $format
      * @return string
      */
-    public function get(string $image_id, string $transformation = null, string $format = ImageFormat::JPEG): string
+    public function get(string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         $parameters = [
             'format' => $format,

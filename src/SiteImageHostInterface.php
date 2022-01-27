@@ -14,7 +14,7 @@ interface SiteImageHostInterface
      * @param string $format
      * @return string
      */
-    public function get(string $image_id, string $transformation, string $format = ImageFormat::JPEG): string;
+    public function get(string $image_id, string $transformation, string $format = SiteImageFormat::JPEG): string;
 
     /**
      * Approve a specific image for use.

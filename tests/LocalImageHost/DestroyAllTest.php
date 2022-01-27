@@ -3,11 +3,11 @@
  * Copyright (c) 2022 Perfect Zero Labs.
  */
 
-namespace PZL\SiteImage\Tests\LocalHost;
+namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
 use Intervention\Image\Facades\Image;
-use PZL\SiteImage\Host\LocalHost;
+use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
 /**
@@ -16,7 +16,7 @@ use PZL\SiteImage\Tests\TestCase;
 class DestroyAllTest extends TestCase
 {
     /**
-     * @var LocalHost
+     * @var LocalImageHost
      */
     private $provider;
 
@@ -24,7 +24,7 @@ class DestroyAllTest extends TestCase
     {
         parent::setUp();
 
-        $this->provider = new LocalHost();
+        $this->provider = new LocalImageHost();
         $fs = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
     }
