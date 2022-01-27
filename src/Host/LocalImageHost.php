@@ -105,8 +105,9 @@ class LocalImageHost extends SiteImageHost
         return $filename;
     }
 
-    public function uploadForModeration(string $image_filename, string $cloud_folder, ?string $cloud_name, array $tags = [], array $transformations = [])
+    public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [])
     {
+        // TODO perhaps keep a list of images to be moderated.
         return $this->upload($image_filename, $cloud_folder, $cloud_name, $tags, $transformations);
     }
 
