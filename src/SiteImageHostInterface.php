@@ -72,7 +72,7 @@ interface SiteImageHostInterface
      *
      * @return mixed
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, ?string $cloud_name, array $tags = [], array $transformations = []);
+    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []);
 
     /**
      * Returns a list of cloud-hosted images matching a specific tag, within the current context.
