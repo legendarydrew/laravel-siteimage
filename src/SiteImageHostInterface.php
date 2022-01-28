@@ -50,16 +50,16 @@ interface SiteImageHostInterface
     /**
      * Copy an image file to the respective storage.
      *
-     * @param string $image_filename the full path to the image file.
-     * @param string $cloud_folder
+     * @param string      $image_filename  the full path to the image file.
+     * @param string      $cloud_folder
      * @param string|null $cloud_name
-     * @param array $tags a list of tags to associate with the images.
-     * @param array $transformations a list of transformation names to perform eager transformations with.
-     * @param array $parameters any additional parameters.
+     * @param array       $tags            a list of tags to associate with the images.
+     * @param array       $transformations a list of transformation names to perform eager transformations with.
+     * @param array       $parameters      any additional parameters.
      *
-     * @return string the public ID of the uploaded image.
+     * @return SiteImageUploadResponse details about the uploaded image.
      */
-    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): string;
+    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse;
 
     /**
      * Copy an image file to the respective storage, marking it as for moderation.
@@ -70,9 +70,9 @@ interface SiteImageHostInterface
      * @param array $tags a list of tags to associate with the images.
      * @param array $transformations a list of transformation names to perform eager transformations with.
      *
-     * @return mixed
+     * @return SiteImageUploadResponse details about the uploaded image.
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []);
+    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse;
 
     /**
      * Returns a list of cloud-hosted images matching a specific tag, within the current context.

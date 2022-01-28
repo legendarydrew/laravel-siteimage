@@ -10,6 +10,7 @@ use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
+use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
  * LocalImage
@@ -69,7 +70,7 @@ class LocalImageHost extends SiteImageHost
         }
     }
 
-    public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): string
+    public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
     {
         $filename = $this->sanitiseFilename(($cloud_folder ? "$cloud_folder--" : '') . basename($cloud_name ?? $image_filename));
         if (!$extension = pathinfo($filename, PATHINFO_EXTENSION)) {
@@ -92,7 +93,8 @@ class LocalImageHost extends SiteImageHost
         // - image files;
         // - Base64-encoded data;
         // - image URLs.
-        Image::make($image_filename)->save($this->getFolder() . $filename, null, $extension);
+        // TODO resize the image to the maximum defined size.
+        $image = Image::make($image_filename)->save($this->getFolder() . $filename, null, $extension);
 
         // Add any specified tags.
         $this->setImageTags($filename, $tags);
@@ -102,10 +104,23 @@ class LocalImageHost extends SiteImageHost
             $this->transform($image_filename, $transformation);
         }
 
-        return $filename;
+        // Return a makeshift response.
+        $response = new SiteImageUploadResponse();
+        $response->public_id = $filename;
+        $response->width = $image->width();
+        $response->height = $image->height();
+        $response->format = $extension;
+        $response->resource_type = 'image';
+        $response->created_at = now()->toISOString();
+        $response->bytes = $image->filesize();
+        $response->type = 'upload';
+        $response->url = $this->transform($image_filename);
+        $response->secure_url = $this->transform($image_filename);
+
+        return $response;
     }
 
-    public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [])
+    public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
     {
         // TODO perhaps keep a list of images to be moderated.
         return $this->upload($image_filename, $cloud_folder, $cloud_name, $tags, $transformations);

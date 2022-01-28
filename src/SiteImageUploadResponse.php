@@ -20,4 +20,18 @@ class SiteImageUploadResponse
     public $type;          // "upload"
     public $url;           // string (http URL)
     public $secure_url;    // string (https URL)
+
+    public static function fromCloudinaryWrapper(CloudinaryWrapper $wrapper): SiteImageUploadResponse
+    {
+        $result = $wrapper->getResult();
+        $response = new SiteImageUploadResponse();
+
+        foreach ($result as $key => $value) {
+            if ( property_exists($response, $key) ) {
+                $result->$key = $value;
+            }
+        }
+
+        return $response;
+    }
 }

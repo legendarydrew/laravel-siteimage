@@ -12,6 +12,7 @@ use PZL\Http\ResponseCode;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\CloudinaryWrapper;
+use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
  * CloudinaryImage.
@@ -91,7 +92,7 @@ class CloudinaryImageHost extends SiteImageHost
     /**
      * @throws Exception
      */
-    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): string
+    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
     {
         $parameters['folder'] = $cloud_folder;
 
@@ -107,14 +108,14 @@ class CloudinaryImageHost extends SiteImageHost
         // Upload the image!
         $wrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $tags, $parameters);
 
-        // Return the public ID of the image.
-        return $wrapper->getPublicId();
+        // Return the upload response.
+        return SiteImageUploadResponse::fromCloudinaryWrapper($wrapper);
     }
 
     /**
      * @throws Exception
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [])
+    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
     {
         $parameters = [
             'folder'     => $cloud_folder,
