@@ -50,7 +50,7 @@
         "PZL\\SiteImage\\SiteImageServiceProvider"
       ],
       "aliases": {
-        "SiteImage": "PZL\\SiteImage\\SiteImageHostInterface"
+        "SiteImage": "PZL\\SiteImage\\Facades\\SiteImageFacade"
       }
     }
   }
