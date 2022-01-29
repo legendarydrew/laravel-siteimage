@@ -29,11 +29,6 @@ class CloudinaryWrapperTest extends TestCase
     /**
      * @var Mockery\Mock
      */
-    private $cloudinary;
-
-    /**
-     * @var Mockery\Mock
-     */
     private $uploader;
 
     /**
@@ -45,14 +40,14 @@ class CloudinaryWrapperTest extends TestCase
     {
         parent::setUp();
 
-        $this->api = Mockery::mock(AdminApi::class);
-        $this->cloudinary = Mockery::mock(Cloudinary::class);
+        $this->api      = Mockery::mock(AdminApi::class);
+        $cloudinary     = Mockery::mock(Cloudinary::class);
         $this->uploader = Mockery::mock(UploadApi::class);
         $this->media = Mockery::mock('overload:' . Media::class);
 
         $this->cloudinary_wrapper = Mockery::mock(CloudinaryWrapper::class);
         $this->cloudinary_wrapper->shouldReceive('getApi')->andReturn($this->api);
-        $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($this->cloudinary);
+        $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($cloudinary);
         $this->cloudinary_wrapper->shouldReceive('getUploader')->andReturn($this->uploader);
         $this->cloudinary_wrapper->makePartial();
     }
