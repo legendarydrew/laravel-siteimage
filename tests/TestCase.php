@@ -43,6 +43,22 @@ abstract class TestCase extends BaseTestCase
                     'crop'          => 'thumb',
                     'gravity'       => 'face:center',
                     'default_image' => 'placeholder.png'
+                ],
+                'without-width' => [
+                    'height'        => 100,
+                    'crop'          => 'thumb',
+                    'gravity'       => 'face:center',
+                    'default_image' => 'placeholder.png'
+                ],
+                'without-height' => [
+                    'width'         => 100,
+                    'crop'          => 'thumb',
+                    'gravity'       => 'face:center',
+                    'default_image' => 'placeholder.png'
+                ],
+                'without-both' => [
+                    'gravity'       => 'face:center',
+                    'default_image' => 'placeholder.png'
                 ]
             ]
         ]);

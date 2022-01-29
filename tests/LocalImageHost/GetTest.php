@@ -67,6 +67,36 @@ class GetTest extends TestCase
         self::assertIsURL($url);
     }
 
+    public function testWithTransformationWithoutWidth()
+    {
+        @mkdir($this->provider->getFolder() . 'without-width');
+        $this->faker->image($this->provider->getFolder() . 'without-width');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-width');
+
+        self::assertIsURL($url);
+    }
+
+    public function testWithTransformationWithoutHeight()
+    {
+        @mkdir($this->provider->getFolder() . 'without-height');
+        $this->faker->image($this->provider->getFolder() . 'without-height');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-height');
+
+        self::assertIsURL($url);
+    }
+
+    public function testWithTransformationWithoutDimensions()
+    {
+        @mkdir($this->provider->getFolder() . 'without-both');
+        $this->faker->image($this->provider->getFolder() . 'without-both');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-both');
+
+        self::assertIsURL($url);
+    }
+
     /**
      * @throws ReflectionException
      */

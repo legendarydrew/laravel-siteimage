@@ -194,8 +194,11 @@ class LocalImageHost extends SiteImageHost
             $config = config('site-images.transformations')[$transformation];
             $target_file = sprintf('%s%s/%s', $this->getFolder(), $transformation, basename($image_file));
             @mkdir($this->getFolder() . $transformation, 0x755, true);
-            $image->resize($config['width'], $config['height'])
-                  ->save($target_file, null, $format);
+
+            if ( isset($config['width']) || isset($config['height']) ) {
+                $image->resize($config['width'] ?? null, $config['height'] ?? null);
+            }
+            $image->save($target_file, null, $format);
 
             return asset(str_replace(public_path(), '', $target_file));
         }
