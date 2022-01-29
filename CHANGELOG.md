@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
+## 1.0.7 - 2022-01-28
+- support for LocalImageHost transformations without a width and/or height defined.
+- test suites now remove any locally-hosted images when each test starts.
+
 ## 1.0.6 - 2022-01-28
 
 - more information than just the image filename is returned when uploading images.

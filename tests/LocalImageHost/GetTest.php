@@ -5,7 +5,6 @@
 
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\WithFaker;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\Host\LocalImageHost;
@@ -35,10 +34,7 @@ class GetTest extends TestCase
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $fs             = new Filesystem();
-        $fs->cleanDirectory($this->provider->getFolder());
-
-        $this->image = $this->faker->image($this->provider->getFolder());
+        $this->image    = $this->faker->image($this->provider->getFolder());
     }
 
     public function testWithoutTransformation()
@@ -63,6 +59,36 @@ class GetTest extends TestCase
         $this->faker->image($this->provider->getFolder() . 'thumbnail');
         $public_id = basename($this->image);
         $url       = $this->provider->get($public_id, 'thumbnail');
+
+        self::assertIsURL($url);
+    }
+
+    public function testWithTransformationWithoutWidth()
+    {
+        @mkdir($this->provider->getFolder() . 'without-width');
+        $this->faker->image($this->provider->getFolder() . 'without-width');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-width');
+
+        self::assertIsURL($url);
+    }
+
+    public function testWithTransformationWithoutHeight()
+    {
+        @mkdir($this->provider->getFolder() . 'without-height');
+        $this->faker->image($this->provider->getFolder() . 'without-height');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-height');
+
+        self::assertIsURL($url);
+    }
+
+    public function testWithTransformationWithoutDimensions()
+    {
+        @mkdir($this->provider->getFolder() . 'without-both');
+        $this->faker->image($this->provider->getFolder() . 'without-both');
+        $public_id = basename($this->image);
+        $url       = $this->provider->get($public_id, 'without-both');
 
         self::assertIsURL($url);
     }
