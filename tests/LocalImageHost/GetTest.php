@@ -5,7 +5,6 @@
 
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\WithFaker;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\Host\LocalImageHost;
@@ -35,10 +34,7 @@ class GetTest extends TestCase
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $fs             = new Filesystem();
-        $fs->cleanDirectory($this->provider->getFolder());
-
-        $this->image = $this->faker->image($this->provider->getFolder());
+        $this->image    = $this->faker->image($this->provider->getFolder());
     }
 
     public function testWithoutTransformation()

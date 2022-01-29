@@ -2,10 +2,12 @@
 
 namespace PZL\SiteImage\Tests;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
 use Intervention\Image\ImageServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\SiteImageServiceProvider;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -17,6 +19,16 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 abstract class TestCase extends BaseTestCase
 {
     use WithFaker;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Remove any existing test images.
+        $fs       = new Filesystem();
+        $provider = new LocalImageHost();
+        $fs->cleanDirectory($provider->getFolder());
+    }
 
     /**
      * Define environment setup.
@@ -37,14 +49,14 @@ abstract class TestCase extends BaseTestCase
                 'scaling'   => []
             ],
             'transformations' => [
-                'thumbnail' => [
+                'thumbnail'      => [
                     'width'         => 100,
                     'height'        => 100,
                     'crop'          => 'thumb',
                     'gravity'       => 'face:center',
                     'default_image' => 'placeholder.png'
                 ],
-                'without-width' => [
+                'without-width'  => [
                     'height'        => 100,
                     'crop'          => 'thumb',
                     'gravity'       => 'face:center',
@@ -56,7 +68,7 @@ abstract class TestCase extends BaseTestCase
                     'gravity'       => 'face:center',
                     'default_image' => 'placeholder.png'
                 ],
-                'without-both' => [
+                'without-both'   => [
                     'gravity'       => 'face:center',
                     'default_image' => 'placeholder.png'
                 ]
