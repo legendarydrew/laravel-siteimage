@@ -52,6 +52,7 @@ class UploadTest extends TestCase
 
     public function testUploadResponse()
     {
+        // TODO perhaps a trait for mocking a Cloudinary upload response.
         $data = [
             'public_id' => $this->faker->uuid,
             'width' => $this->faker->numberBetween(10, 800),
