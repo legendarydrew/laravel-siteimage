@@ -1,6 +1,6 @@
 {
   "name": "legendarydrew/laravel-siteimage",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Laravel package for local environment friendly managing of cloud-hosted images.",
   "keywords": [
     "legendarydrew",
