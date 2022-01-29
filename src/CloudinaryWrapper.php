@@ -44,7 +44,7 @@ class CloudinaryWrapper
     /**
      * Uploaded result.
      *
-     * @var array
+     * @var ApiResponse
      */
     protected $uploadedResult;
 
@@ -181,9 +181,9 @@ class CloudinaryWrapper
     /**
      * Uploaded result.
      *
-     * @return array
+     * @return ApiResponse
      */
-    public function getResult(): array
+    public function getResult(): ApiResponse
     {
         return $this->uploadedResult;
     }

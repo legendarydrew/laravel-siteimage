@@ -11,6 +11,7 @@ use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
 use Mockery;
 use PZL\SiteImage\CloudinaryWrapper;
+use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
  * CloudinaryWrapperTest
@@ -29,11 +30,6 @@ class CloudinaryWrapperTest extends TestCase
     /**
      * @var Mockery\Mock
      */
-    private $cloudinary;
-
-    /**
-     * @var Mockery\Mock
-     */
     private $uploader;
 
     /**
@@ -45,14 +41,14 @@ class CloudinaryWrapperTest extends TestCase
     {
         parent::setUp();
 
-        $this->api = Mockery::mock(AdminApi::class);
-        $this->cloudinary = Mockery::mock(Cloudinary::class);
+        $this->api      = Mockery::mock(AdminApi::class);
+        $cloudinary     = Mockery::mock(Cloudinary::class);
         $this->uploader = Mockery::mock(UploadApi::class);
         $this->media = Mockery::mock('overload:' . Media::class);
 
         $this->cloudinary_wrapper = Mockery::mock(CloudinaryWrapper::class);
         $this->cloudinary_wrapper->shouldReceive('getApi')->andReturn($this->api);
-        $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($this->cloudinary);
+        $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($cloudinary);
         $this->cloudinary_wrapper->shouldReceive('getUploader')->andReturn($this->uploader);
         $this->cloudinary_wrapper->makePartial();
     }
@@ -74,6 +70,10 @@ class CloudinaryWrapperTest extends TestCase
         ];
         $expected_result = ['public_id' => '123456789'];
 
+        $api_response = Mockery::mock(ApiResponse::class);
+        $api_response->shouldReceive('getArrayCopy')->andReturn((object) $expected_result);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+
         $this->uploader->shouldReceive('upload')
                        ->once()
                        ->with($filename, $defaults_options)
@@ -83,8 +83,11 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->upload($filename);
 
         // then
-        $result = $this->cloudinary_wrapper->getResult();
-        self::assertEquals($expected_result, $result);
+        /**
+         * @var SiteImageUploadResponse $result
+         */
+        $result = $this->cloudinary_wrapper->getResult()->getArrayCopy();
+        self::assertEquals($expected_result['public_id'], $result->public_id);
     }
 
     /** @test
@@ -103,6 +106,10 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
+        $api_response = Mockery::mock(ApiResponse::class);
+        $api_response->shouldReceive('getArrayCopy')->andReturn((object) $expected_result);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+
         $this->uploader->shouldReceive('unsignedUpload')
                        ->once()
             ->with($filename, $upload_preset, $defaults_options)
@@ -112,8 +119,11 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->unsignedUpload($filename, null, $upload_preset);
 
         // then
-        $result = $this->cloudinary_wrapper->getResult();
-        self::assertEquals($expected_result, $result);
+        /**
+         * @var SiteImageUploadResponse $result
+         */
+        $result = $this->cloudinary_wrapper->getResult()->getArrayCopy();
+        self::assertEquals($expected_result['public_id'], $result->public_id);
     }
 
     /** @test */
@@ -129,6 +139,10 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
+        $api_response = Mockery::mock(ApiResponse::class);
+        $api_response->shouldReceive('getArrayCopy')->andReturn((object) $expected_result);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+
         $this->uploader->shouldReceive('upload')
                        ->once()
                        ->with($filename, $defaults_options)
@@ -138,8 +152,11 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->upload($filename, null, ['type' => 'private']);
 
         // then
-        $result = $this->cloudinary_wrapper->getResult();
-        self::assertEquals($expected_result, $result);
+        /**
+         * @var SiteImageUploadResponse $result
+         */
+        $result = $this->cloudinary_wrapper->getResult()->getArrayCopy();
+        self::assertEquals($expected_result['public_id'], $result->public_id);
     }
 
     /** @test */
@@ -350,14 +367,21 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
+        $api_response = Mockery::mock(ApiResponse::class);
+        $api_response->shouldReceive('getArrayCopy')->andReturn((object) $expected_result);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+
         $this->uploader->shouldReceive('upload')->once()->with($filename, $defaults_options)->andReturn($expected_result);
 
         // when
         $this->cloudinary_wrapper->uploadVideo($filename);
 
         // then
-        $result = $this->cloudinary_wrapper->getResult();
-        self::assertEquals($expected_result, $result);
+        /**
+         * @var SiteImageUploadResponse $result
+         */
+        $result = $this->cloudinary_wrapper->getResult()->getArrayCopy();
+        self::assertEquals($expected_result['public_id'], $result->public_id);
     }
 
     /** @test */
