@@ -28,16 +28,16 @@ class TaggedTest extends TestCase
         $this->provider = new LocalImageHost();
     }
 
-    public function testToBeImplemented()
+    public function testOnlyTaggedImages()
     {
         $untagged = array_map(function () {
-            return $this->provider->upload($this->faker->image);
+            return $this->provider->upload($this->faker->image)->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
         $tagged_one = array_map(function () {
-            return $this->provider->upload($this->faker->image, null, null, ['one']);
+            return $this->provider->upload($this->faker->image, null, null, ['one'])->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
         $tagged_two = array_map(function () {
-            return $this->provider->upload($this->faker->image, null, null, ['two']);
+            return $this->provider->upload($this->faker->image, null, null, ['two'])->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
 
         $results = $this->provider->tagged('one');
