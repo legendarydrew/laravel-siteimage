@@ -13,7 +13,7 @@ use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
- * LocalImage
+ * LocalImageHost.
  * This class is intended for hosting images locally: primarily used for development
  * and to avoid "polluting" cloud hosting.
  */
@@ -264,5 +264,9 @@ class LocalImageHost extends SiteImageHost
         }
 
         return [];
+    }
+
+    public function allAssets(bool $with_tags = FALSE) {
+
     }
 }

@@ -25,6 +25,14 @@ interface SiteImageHostInterface
     public function approve(string $image_id);
 
     /**
+     * Returns a list of all uploaded assets (images).
+     *
+     * @param bool $with_tags
+     * @return mixed
+     */
+    public function allAssets(bool $with_tags = FALSE);
+
+    /**
      * Reject a specific image.
      *
      * @return mixed

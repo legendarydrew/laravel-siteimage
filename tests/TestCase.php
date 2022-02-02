@@ -46,7 +46,7 @@ abstract class TestCase extends BaseTestCase
                 'cloudName' => 'test!',
                 'apiKey'    => 'damn',
                 'apiSecret' => 'what-the',
-                'scaling'   => []
+                'scaling' => []
             ],
             'transformations' => [
                 'thumbnail'      => [
