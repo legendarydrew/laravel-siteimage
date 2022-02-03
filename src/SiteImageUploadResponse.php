@@ -59,7 +59,7 @@ class SiteImageUploadResponse
     public $created_at;
 
     /**
-     * @var string a list of associated tags.
+     * @var string[] a list of associated tags.
      */
     public $tags;
 
@@ -108,6 +108,17 @@ class SiteImageUploadResponse
      */
     public $api_key;
 
+    public function __construct(array $props = [])
+    {
+        foreach ($props as $key => $value)
+        {
+            if (property_exists($this, $key))
+            {
+                $this->$key = $value;
+            }
+        }
+    }
+
     /**
      * @param CloudinaryWrapper $wrapper
      * @return SiteImageUploadResponse
@@ -115,16 +126,8 @@ class SiteImageUploadResponse
     public static function fromCloudinaryWrapper(CloudinaryWrapper $wrapper): SiteImageUploadResponse
     {
         $result   = $wrapper->getResult()->getArrayCopy();
-        $response = new SiteImageUploadResponse();
-
-        foreach ($result as $key => $value)
-        {
-            if (property_exists($response, $key))
-            {
-                $response->$key = $value;
-            }
-        }
-
-        return $response;
+        return new SiteImageUploadResponse($result);
     }
+
+
 }

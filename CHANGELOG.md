@@ -2,7 +2,11 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
+## 1.0.8 - 2022-02-03
+- added allAssets() to both image hosts.
+
 ## 1.0.7 - 2022-01-28
+- 
 - support for LocalImageHost transformations without a width and/or height defined.
 - test suites now remove any locally-hosted images when each test starts.
 
