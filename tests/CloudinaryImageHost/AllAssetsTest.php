@@ -6,7 +6,6 @@ namespace PZL\SiteImage\Tests\CloudinaryImageHost;
 use Cloudinary\Api\Admin\AdminApi;
 use Cloudinary\Api\ApiResponse;
 use Cloudinary\Api\Upload\UploadApi;
-use Cloudinary\Asset\Media;
 use Cloudinary\Cloudinary;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
@@ -14,8 +13,9 @@ use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\Host\CloudinaryImageHost;
 use PZL\SiteImage\SiteImageUploadResponse;
 use PZL\SiteImage\Tests\TestCase;
+use function PHPUnit\Framework\assertCount;
 
-class UploadTest extends TestCase
+class AllAssetsTest extends TestCase
 {
     use WithFaker;
 
@@ -28,14 +28,14 @@ class UploadTest extends TestCase
     {
         parent::setUp();
 
+        $this->provider = new CloudinaryImageHost();
         $this->provider = Mockery::mock(CloudinaryImageHost::class);
-        $api            = Mockery::mock(AdminApi::class);
+        $this->api      = Mockery::mock(AdminApi::class);
         $cloudinary     = Mockery::mock(Cloudinary::class);
-        $uploader = Mockery::mock(UploadApi::class);
-        $this->cloudinary_wrapper = Mockery::mock(CloudinaryWrapper::class);
-        $this->media = Mockery::mock('overload:' . Media::class);
+        $uploader       = Mockery::mock(UploadApi::class);
 
-        $this->cloudinary_wrapper->shouldReceive('getApi')->andReturn($api);
+        $this->cloudinary_wrapper = Mockery::mock(CloudinaryWrapper::class);
+        $this->cloudinary_wrapper->shouldReceive('getApi')->andReturn($this->api);
         $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($cloudinary);
         $this->cloudinary_wrapper->shouldReceive('getUploader')->andReturn($uploader);
         $this->cloudinary_wrapper->makePartial();
@@ -50,25 +50,26 @@ class UploadTest extends TestCase
         Mockery::close();
     }
 
-    public function testUploadResponse()
+    public function testAllAssetsResponse()
     {
         // TODO perhaps a trait for mocking a Cloudinary upload response.
-        $data = [
-            'public_id' => $this->faker->uuid,
-            'width' => $this->faker->numberBetween(10, 800),
-            'height' => $this->faker->numberBetween(10, 800)
+        $data         = [
+            'resources' => [
+                [
+                    'public_id' => $this->faker->uuid,
+                    'width'     => $this->faker->numberBetween(10, 800),
+                    'height'    => $this->faker->numberBetween(10, 800)
+                ]
+            ]
         ];
         $api_response = Mockery::mock(ApiResponse::class);
         $api_response->shouldReceive('getArrayCopy')->andReturn($data);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
-        $this->cloudinary_wrapper->shouldReceive('upload')->andReturnSelf();
+        $this->api->shouldReceive('assets')->andReturn($api_response);
 
-        $response = $this->provider->upload($this->faker->image, 'test');
+        $response = $this->provider->allAssets();
 
-        self::assertInstanceOf(SiteImageUploadResponse::class, $response);
-        self::assertEquals($data['public_id'], $response->public_id);
-        self::assertEquals($data['width'], $response->width);
-        self::assertEquals($data['height'], $response->height);
+        assertCount(1, $response);
+        self::assertContainsOnlyInstancesOf(SiteImageUploadResponse::class, $response);
 
     }
 }

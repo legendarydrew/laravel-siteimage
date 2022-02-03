@@ -15,7 +15,7 @@ use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
- * CloudinaryImage.
+ * CloudinaryImageHost.
  */
 class CloudinaryImageHost extends SiteImageHost
 {
@@ -79,14 +79,21 @@ class CloudinaryImageHost extends SiteImageHost
         $this->upload($placeholder_image, null, 'placeholder');
     }
 
-    public function get(?string $image_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
+    /**
+     * @param string|null $public_id
+     * @param string|null $transformation
+     * @param string      $format
+     * @return string
+     */
+    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
+        // Null image_id to get the default/placeholder image.
         $parameters = [
             'format' => $format,
             'transformation' => $transformation,
         ];
 
-        return $this->getCloudinaryWrapper()->show($image_id, $parameters);
+        return $this->getCloudinaryWrapper()->show($public_id, $parameters);
     }
 
     /**
@@ -106,7 +113,7 @@ class CloudinaryImageHost extends SiteImageHost
         }
 
         // Upload the image!
-        $wrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $tags, $parameters);
+        $wrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
 
         // Return the upload response.
         return SiteImageUploadResponse::fromCloudinaryWrapper($wrapper);
@@ -126,32 +133,34 @@ class CloudinaryImageHost extends SiteImageHost
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return array
      */
-    public function approve(string $image_id): array
+    public function approve(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($image_id, ['moderation_status' => 'approved'])->getArrayCopy();
+                       ->update($public_id, ['moderation_status' => 'approved'])
+                       ->getArrayCopy();
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return array
      */
-    public function reject(string $image_id): array
+    public function reject(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($image_id, ['moderation_status' => 'rejected'])->getArrayCopy();
+                       ->update($public_id, ['moderation_status' => 'rejected'])
+                       ->getArrayCopy();
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return bool
      */
-    public function destroy(string $image_id): bool
+    public function destroy(string $public_id): bool
     {
-        $output = $this->getCloudinaryWrapper()->destroyImage($image_id, ['invalidate' => true]);
+        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => true]);
 
         return 'ok' === $output['result'];
     }
@@ -172,10 +181,10 @@ class CloudinaryImageHost extends SiteImageHost
         $rows = [];
 
         do {
-            $response = $this->getCloudinaryWrapper()->getApi()->assetsByTag($tag, $params);
+            $response = $this->getCloudinaryWrapper()->getApi()->assetsByTag($tag, $params)->getArrayCopy();
             $rows += $response['resources'];
 
-            if (property_exists($response, 'next_cursor')) {
+            if (isset($response['next_cursor'])) {
                 $params['next_cursor'] = $response['next_cursor'];
             } else {
                 break;
@@ -191,29 +200,10 @@ class CloudinaryImageHost extends SiteImageHost
      */
     public function destroyAll(string $tag = null)
     {
-        // Fetch a list of images matching the respective context, along with any tags they've been assigned.
-        // This is so we end up removing the correct images!
-        $params = [
-            'tags'        => true,
-            'max_results' => 500,
-        ];
-        $public_ids = [];
-        do {
-            $response = $this->getCloudinaryWrapper()->getApi()->assets($params);
-
-            // Make a list of public IDs. If a tag was specified, we only include images with that tag.
-            foreach ($response['resources'] as $row) {
-                if (is_null($tag) || in_array($tag, $row['tags'])) {
-                    $public_ids[] = $row['public_id'];
-                }
-            }
-
-            if (property_exists($response, 'next_cursor')) {
-                $params['next_cursor'] = $response['next_cursor'];
-            } else {
-                break;
-            }
-        } while (true);
+        $assets = $tag ? $this->tagged($tag) : $this->allAssets();
+        $public_ids = array_map(function ($row) {
+            return $row->public_id;
+        }, $assets);
 
         // Delete the images in batches of 100 (a limitation of the Cloudinary API).
         $chunks = array_chunk($public_ids, 100);
@@ -221,5 +211,36 @@ class CloudinaryImageHost extends SiteImageHost
             $this->getCloudinaryWrapper()->getApi()
                     ->deleteAssets($chunk);
         }
+    }
+
+    /**
+     * Returns a list of Cloudinary-hosted assets.
+     *
+     * @param bool $with_tags
+     * @return SiteImageUploadResponse[]
+     */
+    public function allAssets(bool $with_tags = FALSE): array
+    {
+        $params = [
+            'tags'        => $with_tags,
+            'max_results' => 500,
+        ];
+        $assets = [];
+        do {
+            $response = $this->getCloudinaryWrapper()->getApi()->assets($params)->getArrayCopy();
+
+            // Make a list of public IDs. If a tag was specified, we only include images with that tag.
+            foreach ($response['resources'] as $row) {
+                $assets[] = new SiteImageUploadResponse($row);
+            }
+
+            if (isset($response['next_cursor'])) {
+                $params['next_cursor'] = $response['next_cursor'];
+            } else {
+                break;
+            }
+        } while (true);
+
+        return $assets;
     }
 }
