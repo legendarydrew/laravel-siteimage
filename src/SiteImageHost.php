@@ -23,7 +23,8 @@ abstract class SiteImageHost implements SiteImageHostInterface
     }
 
     /**
-     * Returns a set of configured image transformations.
+     * Returns the list of image transformations, as defined in the configuration.
+     *
      * @return array
      */
     public function getTransformations(): array

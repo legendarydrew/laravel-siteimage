@@ -80,12 +80,12 @@ class CloudinaryImageHost extends SiteImageHost
     }
 
     /**
-     * @param string|null $image_id
+     * @param string|null $public_id
      * @param string|null $transformation
      * @param string      $format
      * @return string
      */
-    public function get(string $image_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
+    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         // Null image_id to get the default/placeholder image.
         $parameters = [
@@ -93,7 +93,7 @@ class CloudinaryImageHost extends SiteImageHost
             'transformation' => $transformation,
         ];
 
-        return $this->getCloudinaryWrapper()->show($image_id, $parameters);
+        return $this->getCloudinaryWrapper()->show($public_id, $parameters);
     }
 
     /**
@@ -133,34 +133,34 @@ class CloudinaryImageHost extends SiteImageHost
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return array
      */
-    public function approve(string $image_id): array
+    public function approve(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($image_id, ['moderation_status' => 'approved'])
+                       ->update($public_id, ['moderation_status' => 'approved'])
                        ->getArrayCopy();
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return array
      */
-    public function reject(string $image_id): array
+    public function reject(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($image_id, ['moderation_status' => 'rejected'])
+                       ->update($public_id, ['moderation_status' => 'rejected'])
                        ->getArrayCopy();
     }
 
     /**
-     * @param string $image_id
+     * @param string $public_id
      * @return bool
      */
-    public function destroy(string $image_id): bool
+    public function destroy(string $public_id): bool
     {
-        $output = $this->getCloudinaryWrapper()->destroyImage($image_id, ['invalidate' => true]);
+        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => true]);
 
         return 'ok' === $output['result'];
     }
