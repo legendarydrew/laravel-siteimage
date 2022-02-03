@@ -59,7 +59,7 @@ class UploadTest extends TestCase
             'height' => $this->faker->numberBetween(10, 800)
         ];
         $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn((object) $data);
+        $api_response->shouldReceive('getArrayCopy')->andReturn($data);
         $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
         $this->cloudinary_wrapper->shouldReceive('upload')->andReturnSelf();
 
