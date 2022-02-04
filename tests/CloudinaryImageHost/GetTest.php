@@ -13,6 +13,11 @@ use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\Tests\TestCase;
 use ReflectionException;
 
+/**
+ * GetTest
+ *
+ * @package PZL\SiteImage\Tests\CloudinaryImageHost
+ */
 class GetTest extends TestCase
 {
     use WithFaker;
@@ -32,26 +37,43 @@ class GetTest extends TestCase
      */
     private $placeholder;
 
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->provider = Mockery::mock(CloudinaryImageHost::class)->makePartial();
-        $this->wrapper = Mockery::mock(CloudinaryWrapper::class);
-        $this->image = $this->faker->imageUrl;
+        $this->provider    = Mockery::mock(CloudinaryImageHost::class)->makePartial();
+        $this->wrapper     = Mockery::mock(CloudinaryWrapper::class);
+        $this->image       = $this->faker->imageUrl;
         $this->placeholder = $this->faker->imageUrl;
+        $this->public_id   = basename($this->image);
 
         $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);
-        $this->wrapper->shouldReceive('show')->andReturnUsing(function($arg)
+        $this->wrapper->shouldReceive('show')->andReturnUsing(function ($arg)
         {
-            return $arg === (string)ResponseCode::RESPONSE_NOT_FOUND ? $this->placeholder : $this->image;
+            return in_array($arg, [(string)ResponseCode::RESPONSE_NOT_FOUND, '']) ? $this->placeholder : $this->image;
         });
+    }
+
+    public function testWithoutPublicID()
+    {
+        $url = $this->provider->get();
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder, $url);
+    }
+
+    public function testWithNullPublicID()
+    {
+        $url = $this->provider->get(null);
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder, $url);
     }
 
     public function testWithoutTransformation()
     {
-        $public_id = basename($this->image);
-        $url = $this->provider->get($public_id);
+        $url = $this->provider->get($this->public_id);
 
         self::assertIsURL($url);
         self::assertEquals($this->image, $url);
@@ -59,8 +81,7 @@ class GetTest extends TestCase
 
     public function testWithTransformation()
     {
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'thumbnail');
+        $url = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
         self::assertEquals($this->image, $url);
@@ -75,8 +96,7 @@ class GetTest extends TestCase
 
         foreach ($formats as $format)
         {
-            $public_id = basename($this->image);
-            $url       = $this->provider->get($public_id, null, $format);
+            $url = $this->provider->get($this->public_id, null, $format);
 
             self::assertIsURL($url);
             self::assertEquals($this->image, $url);

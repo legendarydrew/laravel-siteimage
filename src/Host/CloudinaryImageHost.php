@@ -9,9 +9,9 @@ use Cloudinary\Api\Exception\ApiError;
 use Cloudinary\Api\Exception\GeneralError;
 use Exception;
 use PZL\Http\ResponseCode;
+use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
-use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageUploadResponse;
 
 /**
@@ -30,16 +30,12 @@ class CloudinaryImageHost extends SiteImageHost
         $this->wrapper = new CloudinaryWrapper();
     }
 
-    public function getCloudinaryWrapper(): CloudinaryWrapper
-    {
-        return $this->wrapper;
-    }
-
     /**
      * buildTransformations()
      * Build images transformations based on our configuration.
      *
      * @throws Exception
+     * @todo this method should also remove transformations not in the configuration.
      */
     public function buildTransformations(): void
     {
@@ -50,16 +46,25 @@ class CloudinaryImageHost extends SiteImageHost
 
         // Update or create our image transformations, as defined in the image configuration file.
         $transformations = $this->getTransformations();
-        foreach ($transformations as $name => $settings) {
-            try {
+        foreach ($transformations as $name => $settings)
+        {
+            try
+            {
                 // Attempt to UPDATE an existing transformation.
                 $settings['allowed_for_strict'] = 1;
                 $api->updateTransformation($name, $settings);
-            } catch (Exception $e) {
+            }
+            catch (Exception $e)
+            {
                 // Attempt to CREATE the transformation.
                 $api->createTransformation($name, $settings);
             }
         }
+    }
+
+    public function getCloudinaryWrapper(): CloudinaryWrapper
+    {
+        return $this->wrapper;
     }
 
     /**
@@ -73,27 +78,11 @@ class CloudinaryImageHost extends SiteImageHost
         // NOTE: For the benefit of our current deployment method,
         // the placeholder image to use must have been copied to the asset folder.
         $placeholder_image = public_path('assets/img/ph/placeholder.png');
-        if (!$placeholder_image) {
+        if (!$placeholder_image)
+        {
             abort(ResponseCode::RESPONSE_PRECONDITION_FAILED, 'No placeholder image available!');
         }
         $this->upload($placeholder_image, null, 'placeholder');
-    }
-
-    /**
-     * @param string|null $public_id
-     * @param string|null $transformation
-     * @param string      $format
-     * @return string
-     */
-    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
-    {
-        // Null image_id to get the default/placeholder image.
-        $parameters = [
-            'format' => $format,
-            'transformation' => $transformation,
-        ];
-
-        return $this->getCloudinaryWrapper()->show($public_id, $parameters);
     }
 
     /**
@@ -105,11 +94,13 @@ class CloudinaryImageHost extends SiteImageHost
 
         // Set up any "eager" transformations for the image.
         // Eager transformations are versions of the image created immediately, instead of on request.
-        if (count($transformations)) {
-            $parameters['eager'] = array_map(function ($transformation) {
+        if (count($transformations))
+        {
+            $parameters['eager']       = array_map(function ($transformation)
+            {
                 return ['transformation' => $transformation];
             }, $transformations);
-            $parameters['eager_async'] = true;
+            $parameters['eager_async'] = TRUE;
         }
 
         // Upload the image!
@@ -120,9 +111,25 @@ class CloudinaryImageHost extends SiteImageHost
     }
 
     /**
+     * @param string|null $public_id    pass NULL to use a placeholder image.
+     * @param string|null $transformation
+     * @param string      $format
+     * @return string
+     */
+    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
+    {
+        $parameters = [
+            'format'         => $format,
+            'transformation' => $transformation,
+        ];
+
+        return $this->getCloudinaryWrapper()->show($public_id ?? '', $parameters);
+    }
+
+    /**
      * @throws Exception
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
+    public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
     {
         $parameters = [
             'folder'     => $cloud_folder,
@@ -139,8 +146,8 @@ class CloudinaryImageHost extends SiteImageHost
     public function approve(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($public_id, ['moderation_status' => 'approved'])
-                       ->getArrayCopy();
+                    ->update($public_id, ['moderation_status' => 'approved'])
+                    ->getArrayCopy();
     }
 
     /**
@@ -150,8 +157,8 @@ class CloudinaryImageHost extends SiteImageHost
     public function reject(string $public_id): array
     {
         return $this->getCloudinaryWrapper()->getApi()
-                       ->update($public_id, ['moderation_status' => 'rejected'])
-                       ->getArrayCopy();
+                    ->update($public_id, ['moderation_status' => 'rejected'])
+                    ->getArrayCopy();
     }
 
     /**
@@ -160,9 +167,30 @@ class CloudinaryImageHost extends SiteImageHost
      */
     public function destroy(string $public_id): bool
     {
-        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => true]);
+        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => TRUE]);
 
         return 'ok' === $output['result'];
+    }
+
+    /**
+     * @throws GeneralError
+     * @throws ApiError
+     */
+    public function destroyAll(string $tag = null)
+    {
+        $assets     = $tag ? $this->tagged($tag) : $this->allAssets();
+        $public_ids = array_map(function ($row)
+        {
+            return $row->public_id;
+        }, $assets);
+
+        // Delete the images in batches of 100 (a limitation of the Cloudinary API).
+        $chunks = array_chunk($public_ids, 100);
+        foreach ($chunks as $chunk)
+        {
+            $this->getCloudinaryWrapper()->getApi()
+                 ->deleteAssets($chunk);
+        }
     }
 
     /**
@@ -175,42 +203,28 @@ class CloudinaryImageHost extends SiteImageHost
     public function tagged(string $tag)
     {
         $params = [
-            'context'     => true,
+            'context'     => TRUE,
             'max_results' => 500,
         ];
-        $rows = [];
+        $rows   = [];
 
-        do {
+        do
+        {
             $response = $this->getCloudinaryWrapper()->getApi()->assetsByTag($tag, $params)->getArrayCopy();
-            $rows += $response['resources'];
+            $rows     += $response['resources'];
 
-            if (isset($response['next_cursor'])) {
+            if (isset($response['next_cursor']))
+            {
                 $params['next_cursor'] = $response['next_cursor'];
-            } else {
+            }
+            else
+            {
                 break;
             }
-        } while (true);
+        }
+        while (TRUE);
 
         return $rows;
-    }
-
-    /**
-     * @throws GeneralError
-     * @throws ApiError
-     */
-    public function destroyAll(string $tag = null)
-    {
-        $assets = $tag ? $this->tagged($tag) : $this->allAssets();
-        $public_ids = array_map(function ($row) {
-            return $row->public_id;
-        }, $assets);
-
-        // Delete the images in batches of 100 (a limitation of the Cloudinary API).
-        $chunks = array_chunk($public_ids, 100);
-        foreach ($chunks as $chunk) {
-            $this->getCloudinaryWrapper()->getApi()
-                    ->deleteAssets($chunk);
-        }
     }
 
     /**
@@ -226,20 +240,26 @@ class CloudinaryImageHost extends SiteImageHost
             'max_results' => 500,
         ];
         $assets = [];
-        do {
+        do
+        {
             $response = $this->getCloudinaryWrapper()->getApi()->assets($params)->getArrayCopy();
 
             // Make a list of public IDs. If a tag was specified, we only include images with that tag.
-            foreach ($response['resources'] as $row) {
+            foreach ($response['resources'] as $row)
+            {
                 $assets[] = new SiteImageUploadResponse($row);
             }
 
-            if (isset($response['next_cursor'])) {
+            if (isset($response['next_cursor']))
+            {
                 $params['next_cursor'] = $response['next_cursor'];
-            } else {
+            }
+            else
+            {
                 break;
             }
-        } while (true);
+        }
+        while (TRUE);
 
         return $assets;
     }
