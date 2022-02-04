@@ -111,20 +111,19 @@ class CloudinaryImageHost extends SiteImageHost
     }
 
     /**
-     * @param string|null $public_id
+     * @param string|null $public_id    pass NULL to use a placeholder image.
      * @param string|null $transformation
      * @param string      $format
      * @return string
      */
     public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
-        // Null image_id to get the default/placeholder image.
         $parameters = [
             'format'         => $format,
             'transformation' => $transformation,
         ];
 
-        return $this->getCloudinaryWrapper()->show($public_id, $parameters);
+        return $this->getCloudinaryWrapper()->show($public_id ?? '', $parameters);
     }
 
     /**

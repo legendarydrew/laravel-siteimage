@@ -35,6 +35,26 @@ class GetTest extends TestCase
 
         $this->provider = new LocalImageHost();
         $this->image    = $this->faker->image($this->provider->getFolder());
+        $this->placeholder = asset('img/ph/placeholder.png');
+    }
+
+    public function testWithoutPublicID()
+    {
+        @mkdir(public_path('img/ph'), 0755, TRUE);
+        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path('img/ph/placeholder.png'));
+
+        $url = $this->provider->get();
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder, $url);
+    }
+
+    public function testWithNullPublicID()
+    {
+        $url = $this->provider->get(null);
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder, $url);
     }
 
     public function testWithoutTransformation()
