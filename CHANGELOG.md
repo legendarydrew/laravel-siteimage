@@ -3,6 +3,9 @@
 All notable changes to `laravel-siteimage` will be documented in this file.
 
 ## 1.0.9 - 2022-02-04
+- added support for configurable default (placeholder) images.
+
+## 1.0.9 - 2022-02-04
 - fixed inconsistencies with upload().
 
 ## 1.0.8 - 2022-02-03
