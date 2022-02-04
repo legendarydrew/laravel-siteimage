@@ -15,7 +15,7 @@ interface SiteImageHostInterface
      * @param string      $format         [optional] the resulting image format.
      * @return string
      */
-    public function get(?string $public_id, ?string $transformation, string $format = SiteImageFormat::JPEG): string;
+    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string;
 
     /**
      * Approve the specified image for general use.
@@ -55,7 +55,7 @@ interface SiteImageHostInterface
      * @param string|null $tag [optional] only delete images with the specified tag.
      * @return mixed
      */
-    public function destroyAll(?string $tag);
+    public function destroyAll(string $tag = null);
 
     /**
      * Copy an image file to the respective storage.
@@ -75,14 +75,14 @@ interface SiteImageHostInterface
      * Copy an image file to the respective storage, marking it as for moderation.
      *
      * @param string      $image_filename  the full path to the image file.
-     * @param string      $cloud_folder
+     * @param string|null $cloud_folder
      * @param string|null $cloud_name
      * @param array       $tags            a list of tags to associate with the images.
      * @param array       $transformations a list of transformation names to perform eager transformations with.
      *
      * @return SiteImageUploadResponse details about the uploaded image.
      */
-    public function uploadForModeration(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse;
+    public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse;
 
     /**
      * Returns a list of cloud-hosted images matching a specific tag, within the current context.
