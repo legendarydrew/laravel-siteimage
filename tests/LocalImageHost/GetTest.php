@@ -27,28 +27,58 @@ class GetTest extends TestCase
     /**
      * @var string
      */
-    private $image;
+    private $placeholder_image;
+
+    /**
+     * @var string
+     */
+    private $placeholder_url;
+
+    /**
+     * @var string
+     */
+    private $public_id;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $this->image    = $this->faker->image($this->provider->getFolder());
+        $image          = $this->faker->image($this->provider->getFolder());
+
+        $ph = config('site-images.default_image');
+        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path($ph));
+
+        $this->public_id         = basename($image);
+        $this->placeholder_image = public_path($ph);
+        $this->placeholder_url   = asset($ph);
+    }
+
+    public function testWithoutPublicID()
+    {
+        $url = $this->provider->get();
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder_url, $url);
+    }
+
+    public function testWithNullPublicID()
+    {
+        $url = $this->provider->get(null);
+
+        self::assertIsURL($url);
+        self::assertEquals($this->placeholder_url, $url);
     }
 
     public function testWithoutTransformation()
     {
-        $public_id = basename($this->image);
-
-        $url = $this->provider->get($public_id);
+        $url = $this->provider->get($this->public_id);
         self::assertIsURL($url);
     }
 
     public function testWithNewTransformation()
     {
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'thumbnail');
+        $url = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
     }
@@ -57,8 +87,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'thumbnail');
         $this->faker->image($this->provider->getFolder() . 'thumbnail');
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'thumbnail');
+        $url       = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
     }
@@ -67,8 +96,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'without-width');
         $this->faker->image($this->provider->getFolder() . 'without-width');
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'without-width');
+        $url       = $this->provider->get($this->public_id, 'without-width');
 
         self::assertIsURL($url);
     }
@@ -77,8 +105,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'without-height');
         $this->faker->image($this->provider->getFolder() . 'without-height');
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'without-height');
+        $url       = $this->provider->get($this->public_id, 'without-height');
 
         self::assertIsURL($url);
     }
@@ -87,8 +114,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'without-both');
         $this->faker->image($this->provider->getFolder() . 'without-both');
-        $public_id = basename($this->image);
-        $url       = $this->provider->get($public_id, 'without-both');
+        $url       = $this->provider->get($this->public_id, 'without-both');
 
         self::assertIsURL($url);
     }
@@ -102,55 +128,28 @@ class GetTest extends TestCase
 
         foreach ($formats as $format)
         {
-            $public_id = basename($this->image);
-            $url       = $this->provider->get($public_id, null, $format);
-
+            $url = $this->provider->get($this->public_id, null, $format);
             self::assertIsURL($url);
         }
     }
 
-    public function testNoImageWithJPGPlaceholder()
+    public function testNoImageWithPlaceholder()
     {
-        @mkdir(public_path('img/ph'), 0755, TRUE);
-        copy(__DIR__ . '/../../resources/assets/placeholder.jpg', public_path('img/ph/placeholder.jpg'));
         $url = $this->provider->get(null);
         self::assertIsURL($url);
-        self::assertEquals(asset('img/ph/placeholder.jpg'), $url);
-        unlink(public_path('img/ph/placeholder.jpg'));
+        self::assertEquals($this->placeholder_url, $url);
     }
 
-    public function testNoImageWithPNGPlaceholder()
+    public function testInvalidImageWithPlaceholder()
     {
-        @mkdir(public_path('img/ph'), 0755, TRUE);
-        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path('img/ph/placeholder.png'));
-        $url = $this->provider->get(null);
-        self::assertIsURL($url);
-        self::assertEquals(asset('img/ph/placeholder.png'), $url);
-        unlink(public_path('img/ph/placeholder.png'));
-    }
-
-    public function testInvalidImageWithJPGPlaceholder()
-    {
-        @mkdir(public_path('img/ph'), 0755, TRUE);
-        copy(__DIR__ . '/../../resources/assets/placeholder.jpg', public_path('img/ph/placeholder.jpg'));
         $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
         self::assertIsURL($url);
-        self::assertEquals(asset('img/ph/placeholder.jpg'), $url);
-        unlink(public_path('img/ph/placeholder.jpg'));
-    }
-
-    public function testInvalidImageWithPNGPlaceholder()
-    {
-        @mkdir(public_path('img/ph'), 0755, TRUE);
-        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path('img/ph/placeholder.png'));
-        $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
-        self::assertIsURL($url);
-        self::assertEquals(asset('img/ph/placeholder.png'), $url);
-        unlink(public_path('img/ph/placeholder.png'));
+        self::assertEquals($this->placeholder_url, $url);
     }
 
     public function testInvalidImageNoPlaceholder()
     {
+        @unlink($this->placeholder_image);
         $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
         self::assertEmpty($url);
     }

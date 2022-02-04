@@ -21,7 +21,7 @@ class LocalImageHost extends SiteImageHost
 {
     private const TAG_FILE = 'tags.json';
 
-    public function get(?string $public_id, string $transformation = null, string $format = SiteImageFormat::JPEG): string
+    public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         if ($public_id)
         {
@@ -116,19 +116,18 @@ class LocalImageHost extends SiteImageHost
         }
 
         // Return a makeshift response.
-        $response                = new SiteImageUploadResponse();
-        $response->public_id     = $filename;
-        $response->width         = $image->width();
-        $response->height        = $image->height();
-        $response->format        = $extension;
-        $response->resource_type = 'image';
-        $response->created_at    = now()->toISOString();
-        $response->bytes         = $image->filesize();
-        $response->type          = 'upload';
-        $response->url           = $this->transform($image_filename);
-        $response->secure_url    = $this->transform($image_filename);
-
-        return $response;
+        return new SiteImageUploadResponse([
+            'public_id'     => $filename,
+            'width'         => $image->width(),
+            'height'        => $image->height(),
+            'format'        => $extension,
+            'resource_type' => 'image',
+            'created_at'    => now()->toISOString(),
+            'bytes'         => $image->filesize(),
+            'type'          => 'upload',
+            'url'           => $this->transform($image_filename),
+            'secure_url'    => $this->transform($image_filename)
+        ]);
     }
 
     public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
@@ -230,15 +229,10 @@ class LocalImageHost extends SiteImageHost
      */
     protected function transformPlaceholder(string $transformation = null): string
     {
-        $png_placeholder = public_path('img/ph/placeholder.png');
-        $jpg_placeholder = public_path('img/ph/placeholder.jpg');
-        if (file_exists($jpg_placeholder))
+        $placeholder = public_path(config('site-images.default_image'));
+        if (file_exists($placeholder))
         {
-            return $this->transform($jpg_placeholder, $transformation);
-        }
-        elseif (file_exists($png_placeholder))
-        {
-            return $this->transform($png_placeholder, $transformation);
+            return $this->transform($placeholder, $transformation);
         }
 
         return '';
