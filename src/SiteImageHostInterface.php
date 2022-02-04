@@ -61,7 +61,7 @@ interface SiteImageHostInterface
      * Copy an image file to the respective storage.
      *
      * @param string      $image_filename  the full path to the image file.
-     * @param string      $cloud_folder
+     * @param string|null $cloud_folder
      * @param string|null $cloud_name
      * @param array       $tags            a list of tags to associate with the images.
      * @param array       $transformations a list of transformation names to perform eager transformations with.
@@ -69,7 +69,7 @@ interface SiteImageHostInterface
      *
      * @return SiteImageUploadResponse details about the uploaded image.
      */
-    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse;
+    public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse;
 
     /**
      * Copy an image file to the respective storage, marking it as for moderation.
