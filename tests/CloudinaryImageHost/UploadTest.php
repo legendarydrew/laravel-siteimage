@@ -8,6 +8,7 @@ use Cloudinary\Api\ApiResponse;
 use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Asset\Media;
 use Cloudinary\Cloudinary;
+use Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
 use PZL\SiteImage\CloudinaryWrapper;
@@ -50,6 +51,9 @@ class UploadTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testUploadResponse()
     {
         // TODO perhaps a trait for mocking a Cloudinary upload response.
@@ -63,12 +67,11 @@ class UploadTest extends TestCase
         $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
         $this->cloudinary_wrapper->shouldReceive('upload')->andReturnSelf();
 
-        $response = $this->provider->upload($this->faker->image, 'test');
+        $response = $this->provider->upload($this->faker->image);
 
         self::assertInstanceOf(SiteImageUploadResponse::class, $response);
         self::assertEquals($data['public_id'], $response->public_id);
         self::assertEquals($data['width'], $response->width);
         self::assertEquals($data['height'], $response->height);
-
     }
 }

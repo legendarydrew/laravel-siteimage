@@ -99,7 +99,7 @@ class CloudinaryImageHost extends SiteImageHost
     /**
      * @throws Exception
      */
-    public function upload(string $image_filename, string $cloud_folder, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
+    public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
     {
         $parameters['folder'] = $cloud_folder;
 
