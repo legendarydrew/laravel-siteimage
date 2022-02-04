@@ -31,4 +31,15 @@ abstract class SiteImageHost implements SiteImageHostInterface
     {
         return config('site-images.transformations');
     }
+
+    /**
+     * Returns the URL of the defined placeholder image, with any defined transformation applied.
+     *
+     * @param string|null $transformation
+     * @return string|null
+     */
+    public function getPlaceholder(string $transformation = null): ?string {
+        return $this->get(null, $transformation);
+    }
+
 }

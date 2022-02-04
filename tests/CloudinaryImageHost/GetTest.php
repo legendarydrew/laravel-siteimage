@@ -30,37 +30,19 @@ class GetTest extends TestCase
     /**
      * @var string
      */
-    private $image;
+    private $image_url;
 
     /**
      * @var string
      */
-    private $placeholder;
-
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->provider    = Mockery::mock(CloudinaryImageHost::class)->makePartial();
-        $this->wrapper     = Mockery::mock(CloudinaryWrapper::class);
-        $this->image       = $this->faker->imageUrl;
-        $this->placeholder = $this->faker->imageUrl;
-        $this->public_id   = basename($this->image);
-
-        $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);
-        $this->wrapper->shouldReceive('show')->andReturnUsing(function ($arg)
-        {
-            return in_array($arg, [(string)ResponseCode::RESPONSE_NOT_FOUND, '']) ? $this->placeholder : $this->image;
-        });
-    }
+    private $placeholder_url;
 
     public function testWithoutPublicID()
     {
         $url = $this->provider->get();
 
         self::assertIsURL($url);
-        self::assertEquals($this->placeholder, $url);
+        self::assertEquals($this->placeholder_url, $url);
     }
 
     public function testWithNullPublicID()
@@ -68,7 +50,7 @@ class GetTest extends TestCase
         $url = $this->provider->get(null);
 
         self::assertIsURL($url);
-        self::assertEquals($this->placeholder, $url);
+        self::assertEquals($this->placeholder_url, $url);
     }
 
     public function testWithoutTransformation()
@@ -76,7 +58,7 @@ class GetTest extends TestCase
         $url = $this->provider->get($this->public_id);
 
         self::assertIsURL($url);
-        self::assertEquals($this->image, $url);
+        self::assertEquals($this->image_url, $url);
     }
 
     public function testWithTransformation()
@@ -84,7 +66,7 @@ class GetTest extends TestCase
         $url = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
-        self::assertEquals($this->image, $url);
+        self::assertEquals($this->image_url, $url);
     }
 
     /**
@@ -99,7 +81,7 @@ class GetTest extends TestCase
             $url = $this->provider->get($this->public_id, null, $format);
 
             self::assertIsURL($url);
-            self::assertEquals($this->image, $url);
+            self::assertEquals($this->image_url, $url);
         }
     }
 
@@ -107,6 +89,23 @@ class GetTest extends TestCase
     {
         $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
         self::assertIsURL($url);
-        self::assertEquals($this->placeholder, $url);
+        self::assertEquals($this->placeholder_url, $url);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->provider        = Mockery::mock(CloudinaryImageHost::class)->makePartial();
+        $this->wrapper         = Mockery::mock(CloudinaryWrapper::class);
+        $this->image_url       = $this->faker->imageUrl;
+        $this->placeholder_url = $this->faker->imageUrl;
+        $this->public_id       = basename($this->image_url);
+
+        $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);
+        $this->wrapper->shouldReceive('show')->andReturnUsing(function ($arg)
+        {
+            return in_array($arg, [(string)ResponseCode::RESPONSE_NOT_FOUND, config('site-images.default_image')]) ? $this->placeholder_url : $this->image_url;
+        });
     }
 }

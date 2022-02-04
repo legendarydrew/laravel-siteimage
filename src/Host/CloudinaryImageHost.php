@@ -41,9 +41,6 @@ class CloudinaryImageHost extends SiteImageHost
     {
         $api = $this->getCloudinaryWrapper()->getApi();
 
-        // Upload our placeholder image.
-        $this->uploadPlaceholderImage();
-
         // Update or create our image transformations, as defined in the image configuration file.
         $transformations = $this->getTransformations();
         foreach ($transformations as $name => $settings)
@@ -65,24 +62,6 @@ class CloudinaryImageHost extends SiteImageHost
     public function getCloudinaryWrapper(): CloudinaryWrapper
     {
         return $this->wrapper;
-    }
-
-    /**
-     * uploadPlaceholderImage().
-     * Uploads the placeholder image to Cloudinary.
-     *
-     * @throws Exception
-     */
-    public function uploadPlaceholderImage()
-    {
-        // NOTE: For the benefit of our current deployment method,
-        // the placeholder image to use must have been copied to the asset folder.
-        $placeholder_image = public_path('assets/img/ph/placeholder.png');
-        if (!$placeholder_image)
-        {
-            abort(ResponseCode::RESPONSE_PRECONDITION_FAILED, 'No placeholder image available!');
-        }
-        $this->upload($placeholder_image, null, 'placeholder');
     }
 
     /**
@@ -123,7 +102,8 @@ class CloudinaryImageHost extends SiteImageHost
             'transformation' => $transformation,
         ];
 
-        return $this->getCloudinaryWrapper()->show($public_id ?? '', $parameters);
+        return $this->getCloudinaryWrapper()
+                        ->show($public_id ?? config('site-images.default_image'), $parameters);
     }
 
     /**
