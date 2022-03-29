@@ -49,6 +49,7 @@ class GetPlaceholderTest extends TestCase
         $ph = config('site-images.default_image');
         chdir(public_path());
         @mkdir(dirname($ph), 0x644, true);
+        copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path($ph));
 
         $this->placeholder_image = public_path($ph);
         $this->placeholder_url   = asset($ph);
