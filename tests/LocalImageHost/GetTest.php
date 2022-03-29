@@ -11,6 +11,7 @@ use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\Tests\TestCase;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * GetTest.
@@ -49,7 +50,7 @@ class GetTest extends TestCase
         // Copy one of our placeholder images to the public folder.
         $ph = config('site-images.default_image');
         chdir(public_path());
-        @mkdir(dirname($ph), 0x644, true);
+        @mkdir(dirname($ph), 0x644, TRUE);
         copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path($ph));
 
         $this->public_id         = basename($image);
@@ -90,16 +91,25 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'thumbnail');
         $this->faker->image($this->provider->getFolder() . 'thumbnail');
-        $url       = $this->provider->get($this->public_id, 'thumbnail');
+        $url = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
+    }
+
+    public function testWithInvalidTransformation()
+    {
+        $this->expectException(HttpException::class);
+
+        @mkdir($this->provider->getFolder() . 'thumbnail');
+        $this->faker->image($this->provider->getFolder() . 'thumbnail');
+        $this->provider->get($this->public_id, ResponseCode::RESPONSE_NOT_FOUND);
     }
 
     public function testWithTransformationWithoutWidth()
     {
         @mkdir($this->provider->getFolder() . 'without-width');
         $this->faker->image($this->provider->getFolder() . 'without-width');
-        $url       = $this->provider->get($this->public_id, 'without-width');
+        $url = $this->provider->get($this->public_id, 'without-width');
 
         self::assertIsURL($url);
     }
@@ -108,7 +118,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'without-height');
         $this->faker->image($this->provider->getFolder() . 'without-height');
-        $url       = $this->provider->get($this->public_id, 'without-height');
+        $url = $this->provider->get($this->public_id, 'without-height');
 
         self::assertIsURL($url);
     }
@@ -117,7 +127,7 @@ class GetTest extends TestCase
     {
         @mkdir($this->provider->getFolder() . 'without-both');
         $this->faker->image($this->provider->getFolder() . 'without-both');
-        $url       = $this->provider->get($this->public_id, 'without-both');
+        $url = $this->provider->get($this->public_id, 'without-both');
 
         self::assertIsURL($url);
     }

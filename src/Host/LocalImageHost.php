@@ -8,6 +8,7 @@ namespace PZL\SiteImage\Host;
 use Illuminate\Filesystem\Filesystem;
 use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
+use PZL\Http\ResponseCode;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\SiteImageUploadResponse;
@@ -204,7 +205,13 @@ class LocalImageHost extends SiteImageHost
         {
             // For simplicity, we're only concerned about the width and height of the transformation
             // in this provider.
-            $config      = config('site-images.transformations')[$transformation];
+            $transformations = $this->getTransformations();
+            if (!isset($transformations[$transformation]))
+            {
+                abort(ResponseCode::RESPONSE_BAD_REQUEST, 'Invalid image transformation.');
+            }
+
+            $config      = $transformations[$transformation];
             $target_file = sprintf('%s%s/%s', $this->getFolder(), $transformation, basename($image_file));
             @mkdir($this->getFolder() . $transformation, 0x755, TRUE);
 
