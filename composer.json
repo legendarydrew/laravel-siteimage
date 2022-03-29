@@ -19,7 +19,7 @@
   ],
   "require": {
     "php": "^7.3|^8.0",
-    "ext-json": "^1.7",
+    "ext-json": "*",
     "cloudinary/cloudinary_php": "^2.6",
     "intervention/image": "^2.7",
     "legendarydrew/http-constants": "dev-master"
