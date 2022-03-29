@@ -6,8 +6,10 @@
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Foundation\Testing\WithFaker;
+use PZL\Http\ResponseCode;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * GetPlaceholderTest
@@ -68,6 +70,13 @@ class GetPlaceholderTest extends TestCase
         $url = $this->provider->getPlaceholder('thumbnail');
 
         self::assertIsURL($url);
+    }
+
+    public function testWithInvalidTransformation()
+    {
+        $this->expectException(HttpException::class);
+
+        $this->provider->getPlaceholder(ResponseCode::RESPONSE_NOT_FOUND);
     }
 
     public function testPlaceholderDoesNotExist()
