@@ -46,7 +46,10 @@ class GetTest extends TestCase
         $this->provider = new LocalImageHost();
         $image          = $this->faker->image($this->provider->getFolder());
 
+        // Copy one of our placeholder images to the public folder.
         $ph = config('site-images.default_image');
+        chdir(public_path());
+        @mkdir(dirname($ph), 0x644, true);
         copy(__DIR__ . '/../../resources/assets/placeholder.png', public_path($ph));
 
         $this->public_id         = basename($image);
