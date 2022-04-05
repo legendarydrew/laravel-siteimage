@@ -15,7 +15,7 @@ return [
         'apiKey'     => env('SITE_IMAGE_CLOUDINARY_API_KEY'),
         'apiSecret'  => env('SITE_IMAGE_CLOUDINARY_API_SECRET'),
 
-        'scaling' => [
+        'default' => [
             'format' => 'png',
             'width'  => 150,
             'height' => 150,

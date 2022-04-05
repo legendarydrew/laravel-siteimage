@@ -207,8 +207,10 @@ class CloudinaryWrapper
      */
     public function show(string $publicId, array $options = []): string
     {
-        $defaults = config('site-images.cloudinary.scaling');
-        $options  = array_merge($defaults, $options);
+        if (!array_key_exists('transformation', $options)) {
+            $defaults = config('site-images.cloudinary.default', []);
+            $options  = array_merge($defaults, $options);
+        }
 
         return Media::fromParams($publicId, $options);
     }
@@ -222,13 +224,9 @@ class CloudinaryWrapper
      */
     public function secureShow(string $publicId, array $options = []): string
     {
-        $defaults = config('site-images.cloudinary.scaling');
-
-        $options = array_merge($defaults, $options);
-
         $options = array_merge(['secure' => TRUE], $options);
 
-        return Media::fromParams($publicId, $options);
+        return $this->show($publicId, $options);
     }
 
 
