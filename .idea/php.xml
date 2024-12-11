@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="highlightLevel" value="WARNING" />
+    <option name="transferred" value="true" />
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
@@ -123,8 +133,8 @@
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="4240ca57-adfa-4b9b-b88f-374ff794fa4c" name="Remote PHP 7.3" home="vagrant://DATA" debugger_id="php.debugger.XDebug">
-        <remote_data INTERPRETER_PATH="/usr/bin/php" HELPERS_PATH="/home/vagrant/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" VAGRANT_FOLDER="$USER_HOME$/Homestead" />
+      <interpreter id="4240ca57-adfa-4b9b-b88f-374ff794fa4c" name="Remote PHP 7.3" home="vagrant://DATA" auto="false" debugger_id="php.debugger.XDebug">
+        <remote_data INTERPRETER_PATH="/usr/bin/php" HELPERS_PATH="/home/vagrant/.phpstorm_helpers" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" VAGRANT_FOLDER="$USER_HOME$/Homestead" />
       </interpreter>
     </interpreters>
   </component>
@@ -224,9 +234,15 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
   <component name="PhpUnit">
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
     </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
   </component>
 </project>
