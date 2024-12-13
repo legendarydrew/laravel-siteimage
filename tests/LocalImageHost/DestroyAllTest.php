@@ -29,6 +29,9 @@ class DestroyAllTest extends TestCase
         $fs->cleanDirectory($this->provider->getFolder());
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testAll()
     {
         $image_count = $this->faker->numberBetween(1, 5);
@@ -43,6 +46,9 @@ class DestroyAllTest extends TestCase
         }
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testTag()
     {
         $untagged = array_map(function () {

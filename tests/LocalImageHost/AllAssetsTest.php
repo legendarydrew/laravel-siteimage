@@ -20,6 +20,9 @@ class AllAssetsTest extends TestCase
         }
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithoutTags()
     {
         $response = $this->provider->allAssets(false);
@@ -31,6 +34,9 @@ class AllAssetsTest extends TestCase
         }
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithTags()
     {
         $response = $this->provider->allAssets(true);

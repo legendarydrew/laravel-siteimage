@@ -28,6 +28,9 @@ class TaggedTest extends TestCase
         $this->provider = new LocalImageHost();
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testOnlyTaggedImages()
     {
         $untagged = array_map(function () {

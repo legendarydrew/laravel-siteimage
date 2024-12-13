@@ -8,6 +8,9 @@ use PZL\SiteImage\Tests\TestCase;
 class GetTransformationsTest extends TestCase
 {
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testReturnsTransformations()
     {
         $provider = new LocalImageHost();

@@ -51,6 +51,9 @@ class GetPlaceholderTest extends TestCase
         $this->provider->shouldReceive('getPlaceholder')->andReturn($this->placeholder_url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testPlaceholderExists()
     {
         $url = $this->provider->getPlaceholder();
@@ -59,6 +62,9 @@ class GetPlaceholderTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testPlaceholderWithTransformation()
     {
         $url = $this->provider->getPlaceholder('thumbnail');

@@ -58,6 +58,9 @@ class GetTest extends TestCase
         $this->placeholder_url   = asset($ph);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithoutPublicID()
     {
         $url = $this->provider->get();
@@ -66,6 +69,9 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithNullPublicID()
     {
         $url = $this->provider->get(null);
@@ -74,12 +80,18 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithoutTransformation()
     {
         $url = $this->provider->get($this->public_id);
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithNewTransformation()
     {
         $url = $this->provider->get($this->public_id, 'thumbnail');
@@ -87,6 +99,9 @@ class GetTest extends TestCase
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithExistingTransformation()
     {
         @mkdir($this->provider->getFolder() . 'thumbnail');
@@ -96,6 +111,9 @@ class GetTest extends TestCase
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithInvalidTransformation()
     {
         $this->expectException(HttpException::class);
@@ -105,6 +123,9 @@ class GetTest extends TestCase
         $this->provider->get($this->public_id, ResponseCode::RESPONSE_NOT_FOUND);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithTransformationWithoutWidth()
     {
         @mkdir($this->provider->getFolder() . 'without-width');
@@ -114,6 +135,9 @@ class GetTest extends TestCase
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithTransformationWithoutHeight()
     {
         @mkdir($this->provider->getFolder() . 'without-height');
@@ -123,6 +147,9 @@ class GetTest extends TestCase
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithTransformationWithoutDimensions()
     {
         @mkdir($this->provider->getFolder() . 'without-both');
@@ -133,6 +160,7 @@ class GetTest extends TestCase
     }
 
     /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
      * @throws ReflectionException
      */
     public function testAsFormat()
@@ -146,6 +174,9 @@ class GetTest extends TestCase
         }
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testNoImageWithPlaceholder()
     {
         $url = $this->provider->get(null);
@@ -153,6 +184,9 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testInvalidImageWithPlaceholder()
     {
         $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
@@ -160,6 +194,9 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testInvalidImageNoPlaceholder()
     {
         @unlink($this->placeholder_image);
