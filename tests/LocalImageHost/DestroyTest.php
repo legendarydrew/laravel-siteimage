@@ -27,6 +27,9 @@ class DestroyTest extends TestCase
         $fs->cleanDirectory($this->provider->getFolder());
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testDestroy()
     {
         $public_id = basename($this->image);

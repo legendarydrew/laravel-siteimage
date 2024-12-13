@@ -52,6 +52,7 @@ class UploadTest extends TestCase
     }
 
     /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
      * @throws Exception
      */
     public function testUploadResponse()

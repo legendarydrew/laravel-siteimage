@@ -178,17 +178,6 @@ class LocalImageHost extends SiteImageHost
     }
 
     /**
-     * Returns a sanitised version of the specified filename.
-     *
-     * @param string $filename
-     * @return array|string|string[]|null
-     */
-    protected function sanitiseFilename(string $filename)
-    {
-        return preg_replace('/[^a-z0-9.-]/', '', strtolower($filename));
-    }
-
-    /**
      * Returns the URL of the transformed specified image.
      *
      * @param string      $image_file
@@ -332,5 +321,40 @@ class LocalImageHost extends SiteImageHost
                 'original_filename' => $public_id
             ]);
         }, $files);
+    }
+
+    public function rename(string $public_id, string $new_public_id, bool $overwrite = FALSE): array
+    {
+        // Check if the image exists.
+        $original_file = $this->getFolder() . $public_id;
+        if (!file_exists($original_file))
+        {
+            abort(ResponseCode::RESPONSE_BAD_REQUEST, 'Image not found.');
+        }
+
+        // Check if the new image exists.
+        $new_file = $this->getFolder() . $new_public_id;
+        if (file_exists($new_file))
+        {
+            if (!$overwrite)
+            {
+                abort(ResponseCode::RESPONSE_PRECONDITION_FAILED, 'Image with the new ID already exists.');
+            }
+            else
+            {
+                $this->destroy($new_public_id);
+            }
+        }
+
+        // Rename the image.
+        $new_public_id = $this->sanitiseFilename($new_public_id);
+        rename($original_file, $this->getFolder() . $new_public_id);
+
+        // Remove any transformed images.
+        (new Filesystem())->delete([
+            $this->getFolder() . '**/' . basename($public_id)
+        ]);
+
+        return ['public_id' => $new_public_id];
     }
 }

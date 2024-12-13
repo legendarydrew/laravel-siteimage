@@ -42,4 +42,24 @@ abstract class SiteImageHost implements SiteImageHostInterface
         return $this->get(null, $transformation);
     }
 
+    /**
+     * Returns a sanitised version of the specified filename.
+     *
+     * @param string $filename
+     * @return array|string|string[]|null
+     */
+    protected function sanitiseFilename(string $filename)
+    {
+        return preg_replace('/[^a-z0-9.-]/', '', strtolower($filename));
+    }
+
+    /**
+     * Rename an existing uploaded image.
+     *
+     * @param string $public_id
+     * @param string $new_public_id
+     * @param bool   $overwrite
+     * @return mixed
+     */
+    abstract public function rename(string $public_id, string $new_public_id, bool $overwrite = false);
 }

@@ -57,6 +57,9 @@ class GetPlaceholderTest extends TestCase
         $this->placeholder_url   = asset($ph);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testPlaceholderExists()
     {
         $url = $this->provider->getPlaceholder();
@@ -65,6 +68,9 @@ class GetPlaceholderTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testPlaceholderWithTransformation()
     {
         $url = $this->provider->getPlaceholder('thumbnail');
@@ -72,6 +78,9 @@ class GetPlaceholderTest extends TestCase
         self::assertIsURL($url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testWithInvalidTransformation()
     {
         $this->expectException(HttpException::class);
@@ -79,6 +88,9 @@ class GetPlaceholderTest extends TestCase
         $this->provider->getPlaceholder(ResponseCode::RESPONSE_NOT_FOUND);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testPlaceholderDoesNotExist()
     {
         @unlink($this->placeholder_image);

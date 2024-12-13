@@ -36,7 +36,7 @@ abstract class TestCase extends BaseTestCase
      * @param Application $app
      * @return void
      */
-    protected function defineEnvironment($app)
+    protected function defineEnvironment($app): void
     {
         $app['config']->set('site-images', [
             'local'           => [

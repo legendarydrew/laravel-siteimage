@@ -37,6 +37,9 @@ class GetTest extends TestCase
      */
     private $placeholder_url;
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testWithoutPublicID()
     {
         $url = $this->provider->get();
@@ -45,6 +48,9 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testWithNullPublicID()
     {
         $url = $this->provider->get(null);
@@ -53,6 +59,9 @@ class GetTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testWithoutTransformation()
     {
         $url = $this->provider->get($this->public_id);
@@ -61,6 +70,9 @@ class GetTest extends TestCase
         self::assertEquals($this->image_url, $url);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testWithTransformation()
     {
         $url = $this->provider->get($this->public_id, 'thumbnail');
@@ -70,6 +82,7 @@ class GetTest extends TestCase
     }
 
     /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
      * @throws ReflectionException
      */
     public function testAsFormat()
@@ -85,6 +98,9 @@ class GetTest extends TestCase
         }
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testInvalidImage()
     {
         $url = $this->provider->get(ResponseCode::RESPONSE_NOT_FOUND);
