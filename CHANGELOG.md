@@ -2,7 +2,10 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
-## 1.0.9 - 2022-02-04
+## 1.0.11 - 2022-12-13
+- added rename().
+
+## 1.0.10 - 2022-04-05
 - added support for configurable default (placeholder) images.
 
 ## 1.0.9 - 2022-02-04
@@ -26,7 +29,7 @@ All notable changes to `laravel-siteimage` will be documented in this file.
 - SiteImage::get() can be called with a null image ID.
 
 ## 1.0.3 - 2022-01-26
-- added test suites for both the LocalHost and Cloudinary host, though some are not yet populated,
+- added test suites for both the LocalHost and Cloudinary host, though some are not yet populated.
 - added a SiteImage facade.
 
 ## 1.0.1 - 2022-01-24
