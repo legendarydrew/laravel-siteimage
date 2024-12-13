@@ -12,6 +12,9 @@ use PZL\SiteImage\Tests\TestCase;
 class BuildTransformationsTest extends TestCase
 {
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testDoesNothing()
     {
         // Nothing should happen.

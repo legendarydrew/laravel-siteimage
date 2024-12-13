@@ -34,6 +34,9 @@ class ApproveTest extends TestCase
         $this->image = $this->faker->image($this->provider->getFolder());
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     */
     public function testApprovesImage()
     {
         $public_id = basename($this->image);

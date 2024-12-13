@@ -50,6 +50,9 @@ class AllAssetsTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
+     */
     public function testAllAssetsResponse()
     {
         // TODO perhaps a trait for mocking a Cloudinary upload response.

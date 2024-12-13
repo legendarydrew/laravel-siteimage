@@ -43,6 +43,7 @@ SiteImage::get($image_id[, $transformation, $format])
 SiteImage::approve($image_id)
 SiteImage::reject($image_id)
 SiteImage::destroy($image_id)
+SiteImage::rename($old_image_id, $new_image_id)
 ...
 ```
 

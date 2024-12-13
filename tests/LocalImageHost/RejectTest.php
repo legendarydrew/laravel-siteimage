@@ -7,6 +7,7 @@ namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\Host\LocalImageHost;
+use PZL\SiteImage\SiteImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
 /**
@@ -17,7 +18,7 @@ class RejectTest extends TestCase
     /**
      * @var LocalImageHost
      */
-    private $provider;
+    private SiteImageHost $provider;
 
     protected function setUp(): void
     {
@@ -25,6 +26,10 @@ class RejectTest extends TestCase
         $this->provider = new LocalImageHost();
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     * @return void
+     */
     public function testExisting()
     {
         $image = $this->faker->image($this->provider->getFolder());
@@ -38,6 +43,10 @@ class RejectTest extends TestCase
         self::assertFileDoesNotExist($this->provider->getFolder() . $filename);
     }
 
+    /**
+     * @covers \PZL\SiteImage\Host\LocalImageHost
+     * @return void
+     */
     public function testInvalid()
     {
         @unlink($this->provider->getFolder() . ResponseCode::RESPONSE_NOT_FOUND);

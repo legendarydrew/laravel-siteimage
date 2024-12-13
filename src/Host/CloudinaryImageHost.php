@@ -8,7 +8,6 @@ namespace PZL\SiteImage\Host;
 use Cloudinary\Api\Exception\ApiError;
 use Cloudinary\Api\Exception\GeneralError;
 use Exception;
-use PZL\Http\ResponseCode;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
@@ -83,14 +82,15 @@ class CloudinaryImageHost extends SiteImageHost
         }
 
         // Upload the image!
-        $wrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
+        $image_filename = $this->sanitiseFilename($image_filename);
+        $wrapper        = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
 
         // Return the upload response.
         return SiteImageUploadResponse::fromCloudinaryWrapper($wrapper);
     }
 
     /**
-     * @param string|null $public_id    pass NULL to use a placeholder image.
+     * @param string|null $public_id pass NULL to use a placeholder image.
      * @param string|null $transformation
      * @param string      $format
      * @return string
@@ -103,7 +103,7 @@ class CloudinaryImageHost extends SiteImageHost
         ];
 
         return $this->getCloudinaryWrapper()
-                        ->show($public_id ?? config('site-images.default_image'), $parameters);
+                    ->show($public_id ?? config('site-images.default_image'), $parameters);
     }
 
     /**
@@ -242,5 +242,22 @@ class CloudinaryImageHost extends SiteImageHost
         while (TRUE);
 
         return $assets;
+    }
+
+    /**
+     * Renames a Cloudinary asset.
+     *
+     * @param string $public_id
+     * @param string $new_public_id
+     * @param bool   $overwrite
+     * @return SiteImageUploadResponse
+     */
+    public function rename(string $public_id, string $new_public_id, bool $overwrite = FALSE): SiteImageUploadResponse
+    {
+        // https://cloudinary.com/documentation/image_upload_api_reference#rename_method
+        $new_public_id = $this->sanitiseFilename($new_public_id);
+        $wrapper       = $this->getCloudinaryWrapper()->rename($public_id, $new_public_id, ['overwrite' => $overwrite]);
+
+        return new SiteImageUploadResponse($wrapper);
     }
 }
