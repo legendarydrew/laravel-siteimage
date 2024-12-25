@@ -2,7 +2,10 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
-## 1.0.11 - 2022-12-13
+## 1.0.11 - 2024-12-25
+- ability to overwrite files with upload() for LocalImageHost.
+
+## 1.0.11 - 2024-12-13
 - added rename().
 
 ## 1.0.10 - 2022-04-05
