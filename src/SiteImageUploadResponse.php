@@ -125,9 +125,8 @@ class SiteImageUploadResponse
      */
     public static function fromCloudinaryWrapper(CloudinaryWrapper $wrapper): SiteImageUploadResponse
     {
-        $result   = $wrapper->getResult()->getArrayCopy();
+        $result = $wrapper->getResult()->getArrayCopy();
         return new SiteImageUploadResponse($result);
     }
-
 
 }

@@ -207,7 +207,8 @@ class CloudinaryWrapper
      */
     public function show(string $publicId, array $options = []): string
     {
-        if (!array_key_exists('transformation', $options)) {
+        if (!array_key_exists('transformation', $options))
+        {
             $defaults = config('site-images.cloudinary.default', []);
             $options  = array_merge($defaults, $options);
         }
@@ -224,7 +225,7 @@ class CloudinaryWrapper
      */
     public function secureShow(string $publicId, array $options = []): string
     {
-        $options = array_merge(['secure' => TRUE], $options);
+        $options = array_merge(['secure' => true], $options);
 
         return $this->show($publicId, $options);
     }
