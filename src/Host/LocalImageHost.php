@@ -90,7 +90,8 @@ class LocalImageHost extends SiteImageHost
 
         // Copy the file over to the defined folder.
         // If a file with the same name exists, give the uploaded file a new name.
-        if (file_exists($this->getFolder() . $filename))
+        $overwrite = $parameters['overwrite'] ?? false;
+        if (!$overwrite && file_exists($this->getFolder() . $filename))
         {
             $filename = sprintf(
                 '%s_%s.%s',
@@ -161,7 +162,7 @@ class LocalImageHost extends SiteImageHost
      *
      * @return string
      */
-    protected function createFolder(string $subdirectory = null, bool $with_sep = TRUE): string
+    protected function createFolder(string $subdirectory = null, bool $with_sep = true): string
     {
         if ($subdirectory)
         {
@@ -172,7 +173,7 @@ class LocalImageHost extends SiteImageHost
 
         $path        = sprintf('uploads%s%s', $subdirectory, ($with_sep ? DIRECTORY_SEPARATOR : ''));
         $folder_path = public_path($path);
-        @mkdir($folder_path, 0755, TRUE);
+        @mkdir($folder_path, 0755, true);
 
         return $folder_path;
     }
@@ -202,7 +203,7 @@ class LocalImageHost extends SiteImageHost
 
             $config      = $transformations[$transformation];
             $target_file = sprintf('%s%s/%s', $this->getFolder(), $transformation, basename($image_file));
-            @mkdir($this->getFolder() . $transformation, 0x755, TRUE);
+            @mkdir($this->getFolder() . $transformation, 0x755, true);
 
             if (isset($config['width']) || isset($config['height']))
             {
@@ -241,7 +242,7 @@ class LocalImageHost extends SiteImageHost
     protected function setImageTags(string $public_id, array $tags)
     {
         $tag_file = $this->getFolder() . self::TAG_FILE;
-        $tag_list = file_exists($tag_file) ? json_decode(file_get_contents($tag_file), TRUE) : [];
+        $tag_list = file_exists($tag_file) ? json_decode(file_get_contents($tag_file), true) : [];
 
         foreach ($tags as $tag)
         {
@@ -271,7 +272,7 @@ class LocalImageHost extends SiteImageHost
         $tag_file = $this->getFolder() . self::TAG_FILE;
         if (file_exists($tag_file))
         {
-            $tags = json_decode(file_get_contents($tag_file), TRUE);
+            $tags = json_decode(file_get_contents($tag_file), true);
 
             return array_key_exists($tag, $tags) ? $tags[$tag] : [];
         }
@@ -285,7 +286,7 @@ class LocalImageHost extends SiteImageHost
         $tag_file = $this->getFolder() . self::TAG_FILE;
         if (file_exists($tag_file))
         {
-            $tags = json_decode(file_get_contents($tag_file), TRUE);
+            $tags = json_decode(file_get_contents($tag_file), true);
             foreach ($tags as $tag => $images)
             {
                 if (in_array($public_id, $images))
@@ -298,7 +299,7 @@ class LocalImageHost extends SiteImageHost
         return $tag_list;
     }
 
-    public function allAssets(bool $with_tags = FALSE): array
+    public function allAssets(bool $with_tags = false): array
     {
         $files = glob($this->getFolder() . '/*.{jpg,png}', GLOB_BRACE);
         return array_map(function ($row) use ($with_tags)
@@ -315,7 +316,7 @@ class LocalImageHost extends SiteImageHost
                 'tags'              => $with_tags ? $this->getImageTags($public_id) : [],
                 'bytes'             => filesize($row),
                 'type'              => '',
-                'placeholder'       => FALSE,
+                'placeholder'       => false,
                 'url'               => $this->get($public_id),
                 'secure_url'        => $this->get($public_id),
                 'original_filename' => $public_id
@@ -323,7 +324,7 @@ class LocalImageHost extends SiteImageHost
         }, $files);
     }
 
-    public function rename(string $public_id, string $new_public_id, bool $overwrite = FALSE): array
+    public function rename(string $public_id, string $new_public_id, bool $overwrite = false): array
     {
         // Check if the image exists.
         $original_file = $this->getFolder() . $public_id;

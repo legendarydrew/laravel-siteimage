@@ -53,12 +53,12 @@ class SiteImageServiceProvider extends ServiceProvider
 
         // Register CloudinaryWrapper as a singleton.
         // TODO can we do this conditionally?
-        $this->app->singleton('pzl.site-image.cloudinary', function ($app) {
+        $this->app->singleton('pzl.site-image.cloudinary', function () {
             return new CloudinaryWrapper();
         });
 
         // Register the SiteImage facade.
-        $this->app->bind('site-image', function($app) {
+        $this->app->bind('site-image', function() {
             return new SiteImageFacade();
         });
 
