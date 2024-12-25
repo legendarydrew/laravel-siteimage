@@ -78,7 +78,7 @@ class CloudinaryImageHost extends SiteImageHost
             {
                 return ['transformation' => $transformation];
             }, $transformations);
-            $parameters['eager_async'] = TRUE;
+            $parameters['eager_async'] = true;
         }
 
         // Upload the image!
@@ -147,7 +147,7 @@ class CloudinaryImageHost extends SiteImageHost
      */
     public function destroy(string $public_id): bool
     {
-        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => TRUE]);
+        $output = $this->getCloudinaryWrapper()->destroyImage($public_id, ['invalidate' => true]);
 
         return 'ok' === $output['result'];
     }
@@ -183,7 +183,7 @@ class CloudinaryImageHost extends SiteImageHost
     public function tagged(string $tag)
     {
         $params = [
-            'context'     => TRUE,
+            'context'     => true,
             'max_results' => 500,
         ];
         $rows   = [];
@@ -202,7 +202,7 @@ class CloudinaryImageHost extends SiteImageHost
                 break;
             }
         }
-        while (TRUE);
+        while (true);
 
         return $rows;
     }
@@ -213,7 +213,7 @@ class CloudinaryImageHost extends SiteImageHost
      * @param bool $with_tags
      * @return SiteImageUploadResponse[]
      */
-    public function allAssets(bool $with_tags = FALSE): array
+    public function allAssets(bool $with_tags = false): array
     {
         $params = [
             'tags'        => $with_tags,
@@ -239,7 +239,7 @@ class CloudinaryImageHost extends SiteImageHost
                 break;
             }
         }
-        while (TRUE);
+        while (true);
 
         return $assets;
     }
@@ -252,7 +252,7 @@ class CloudinaryImageHost extends SiteImageHost
      * @param bool   $overwrite
      * @return SiteImageUploadResponse
      */
-    public function rename(string $public_id, string $new_public_id, bool $overwrite = FALSE): SiteImageUploadResponse
+    public function rename(string $public_id, string $new_public_id, bool $overwrite = false): SiteImageUploadResponse
     {
         // https://cloudinary.com/documentation/image_upload_api_reference#rename_method
         $new_public_id = $this->sanitiseFilename($new_public_id);

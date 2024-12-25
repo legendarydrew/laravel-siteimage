@@ -31,7 +31,7 @@ interface SiteImageHostInterface
      * @param bool $with_tags [optional] whether to include each image's associated tags in the list.
      * @return SiteImageUploadResponse[]
      */
-    public function allAssets(bool $with_tags = FALSE): array;
+    public function allAssets(bool $with_tags = false): array;
 
     /**
      * Reject the specified image.
