@@ -82,8 +82,8 @@ class CloudinaryImageHost extends SiteImageHost
         }
 
         // Upload the image!
-        $image_filename = $this->sanitiseFilename($image_filename);
-        $wrapper        = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
+        $cloud_name = $cloud_name ?? $this->sanitiseFilename($image_filename);
+        $wrapper    = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
 
         // Return the upload response.
         return SiteImageUploadResponse::fromCloudinaryWrapper($wrapper);
