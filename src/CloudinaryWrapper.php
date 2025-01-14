@@ -267,7 +267,7 @@ class CloudinaryWrapper
      */
     public function rename(string $publicId, string $toPublicId, array $options = []): array
     {
-        return $this->getUploader()->rename($publicId, $toPublicId, $options);
+        return $this->getUploader()->rename($publicId, $toPublicId, $options)->getArrayCopy();
     }
 
     /**
