@@ -1,6 +1,6 @@
 {
   "name": "legendarydrew/laravel-siteimage",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Laravel package for local environment friendly managing of cloud-hosted images.",
   "keywords": [
     "legendarydrew",
@@ -27,7 +27,8 @@
   "require-dev": {
     "fakerphp/faker": "^1.18",
     "orchestra/testbench": "^9.7",
-    "phpunit/phpunit": "^10"
+    "phpunit/phpunit": "^10",
+    "rector/rector": "^2.0"
   },
   "autoload": {
     "psr-4": {
