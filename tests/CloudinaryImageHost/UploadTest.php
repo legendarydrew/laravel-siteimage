@@ -68,7 +68,7 @@ class UploadTest extends TestCase
         $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
         $this->cloudinary_wrapper->shouldReceive('upload')->andReturnSelf();
 
-        $response = $this->provider->upload($this->faker->image);
+        $response = $this->provider->upload($this->faker->picsum());
 
         self::assertInstanceOf(SiteImageUploadResponse::class, $response);
         self::assertEquals($data['public_id'], $response->public_id);

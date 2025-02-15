@@ -15,8 +15,6 @@ abstract class SiteImageHost implements SiteImageHostInterface
     /**
      * Build images transformations based on our configuration.
      * This is mainly for the benefit of cloud-hosted images (i.e. Cloudinary).
-     *
-     * @return void
      */
     public function buildTransformations(): void
     {
@@ -24,8 +22,6 @@ abstract class SiteImageHost implements SiteImageHostInterface
 
     /**
      * Returns the list of image transformations, as defined in the configuration.
-     *
-     * @return array
      */
     public function getTransformations(): array
     {
@@ -36,7 +32,6 @@ abstract class SiteImageHost implements SiteImageHostInterface
      * Returns the URL of the defined placeholder image, with any defined transformation applied.
      *
      * @param string|null $transformation
-     * @return string|null
      */
     public function getPlaceholder(string $transformation = null): ?string {
         return $this->get(null, $transformation);
@@ -45,7 +40,6 @@ abstract class SiteImageHost implements SiteImageHostInterface
     /**
      * Returns a sanitised version of the specified filename.
      *
-     * @param string $filename
      * @return array|string|string[]|null
      */
     protected function sanitiseFilename(string $filename)
@@ -55,11 +49,6 @@ abstract class SiteImageHost implements SiteImageHostInterface
 
     /**
      * Rename an existing uploaded image.
-     *
-     * @param string $public_id
-     * @param string $new_public_id
-     * @param bool   $overwrite
-     * @return mixed
      */
-    abstract public function rename(string $public_id, string $new_public_id, bool $overwrite = false);
+    abstract public function rename(string $public_id, string $new_public_id, bool $overwrite = false): SiteImageUploadResponse;
 }

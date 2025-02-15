@@ -38,7 +38,7 @@ class UploadTest extends TestCase
         $fs = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
 
-        $this->image    = $this->faker->image;
+        $this->image    = $this->faker->picsum();
         $this->filename = basename($this->image);
     }
 
@@ -94,7 +94,7 @@ class UploadTest extends TestCase
      */
     public function testUrl()
     {
-        $this->image = $this->faker->imageUrl();
+        $this->image = $this->faker->picsum();
         $public_id   = $this->provider->upload($this->image)->public_id;
 
         self::assertFileExists($this->provider->getFolder() . $public_id);

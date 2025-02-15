@@ -46,7 +46,7 @@ class GetPlaceholderTest extends TestCase
         parent::setUp();
 
         $this->provider        = Mockery::mock(CloudinaryImageHost::class)->makePartial();
-        $this->placeholder_url = $this->faker->imageUrl;
+        $this->placeholder_url = $this->faker->picsumUrl();
 
         $this->provider->shouldReceive('getPlaceholder')->andReturn($this->placeholder_url);
     }

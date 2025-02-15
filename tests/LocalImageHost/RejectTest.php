@@ -32,7 +32,7 @@ class RejectTest extends TestCase
      */
     public function testExisting()
     {
-        $image = $this->faker->image($this->provider->getFolder());
+        $image = $this->faker->picsum($this->provider->getFolder());
         $filename = basename($image);
         copy($image, $this->provider->getFolder() . $filename);
 

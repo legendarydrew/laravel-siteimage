@@ -17,10 +17,7 @@ use PZL\SiteImage\Facades\SiteImageFacade;
  */
 class SiteImageServiceProvider extends ServiceProvider
 {
-    /**
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->runningInConsole())
         {
@@ -35,15 +32,13 @@ class SiteImageServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         // Register the SiteImageHost to be used for images, as defined in the configuration.
         $this->app->singleton(
             'pzl.site-image.host',
-            function ()
+            function (): object
             {
                 $providerClass = 'PZL\\SiteImage\\Host\\' . config('site-images.provider');
 
@@ -53,14 +48,10 @@ class SiteImageServiceProvider extends ServiceProvider
 
         // Register CloudinaryWrapper as a singleton.
         // TODO can we do this conditionally?
-        $this->app->singleton('pzl.site-image.cloudinary', function () {
-            return new CloudinaryWrapper();
-        });
+        $this->app->singleton('pzl.site-image.cloudinary', fn(): \PZL\SiteImage\CloudinaryWrapper => new CloudinaryWrapper());
 
         // Register the SiteImage facade.
-        $this->app->bind('site-image', function() {
-            return new SiteImageFacade();
-        });
+        $this->app->bind('site-image', fn(): \PZL\SiteImage\Facades\SiteImageFacade => new SiteImageFacade());
 
     }
 
