@@ -3,7 +3,6 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="PZL\SiteImage\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="PZL\SiteImage\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ralouphie/getallheaders" />
@@ -124,6 +123,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php84" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-uuid" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/uid" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mmo/faker-images" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rector/rector" />
     </content>

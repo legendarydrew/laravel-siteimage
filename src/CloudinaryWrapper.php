@@ -64,7 +64,7 @@ class CloudinaryWrapper
             ]
         ]);
         $this->uploader   = new UploadApi();
-        $this->adminApi        = new AdminApi();
+        $this->adminApi   = new AdminApi();
     }
 
     /**
@@ -139,7 +139,7 @@ class CloudinaryWrapper
             'tags'      => $tags,
         ]);
 
-        $options              = array_merge($options, $uploadOptions);
+        $options = array_merge($options, $uploadOptions);
 
         $this->uploadedResult = $this->getUploader()->unsignedUpload($source, $uploadPreset, $options);
 
@@ -221,7 +221,8 @@ class CloudinaryWrapper
      */
     public function rename(string $publicId, string $toPublicId, array $options = []): array
     {
-        return $this->getUploader()->rename($publicId, $toPublicId, $options)->getArrayCopy();
+        $response = $this->getUploader()->rename($publicId, $toPublicId, $options);
+        return is_array($response) ? $response : $response->getArrayCopy();
     }
 
     /**
@@ -303,7 +304,7 @@ class CloudinaryWrapper
      *
      * @throws ApiError
      */
-    public function deleteDerivedAssets(array $publicIds = [], array $options = [])
+    public function deleteDerivedAssets(array $publicIds = [])
     {
         return $this->getApi()->deleteDerivedAssets($publicIds);
     }
@@ -456,7 +457,7 @@ class CloudinaryWrapper
      *
      * @throws ApiError
      */
-    public function updateTransformation(string $transformation, array $updates = [], array $options = []): array
+    public function updateTransformation(string $transformation, array $updates = []): array
     {
         return $this->getApi()->updateTransformation($transformation, $updates)->getArrayCopy();
     }
@@ -464,7 +465,7 @@ class CloudinaryWrapper
     /**
      * Create transformation
      */
-    public function createTransformation(string $name, string $definition, array $options = []): array
+    public function createTransformation(string $name, string $definition): array
     {
         return $this->getApi()->createTransformation($name, $definition)->getArrayCopy();
     }
@@ -480,7 +481,7 @@ class CloudinaryWrapper
     /**
      * Get upload mapping
      */
-    public function uploadMapping(string $name, array $options = []): array
+    public function uploadMapping(string $name): array
     {
         return $this->getApi()->uploadMapping($name)->getArrayCopy();
     }
@@ -498,7 +499,7 @@ class CloudinaryWrapper
      *
      * @throws ApiError
      */
-    public function deleteUploadMapping(string $name, array $options = []): array
+    public function deleteUploadMapping(string $name): array
     {
         return $this->getApi()->deleteUploadMapping($name)->getArrayCopy();
     }
@@ -532,7 +533,7 @@ class CloudinaryWrapper
     /**
      * Create upload preset
      */
-    public function createUploadPreset(string $name, array $options = []): array
+    public function createUploadPreset(string $name): array
     {
         return $this->getApi()->createUploadPreset($name)->getArrayCopy();
     }
@@ -542,7 +543,7 @@ class CloudinaryWrapper
      *
      * @throws ApiError
      */
-    public function deleteUploadPreset(string $name, array $options = []): array
+    public function deleteUploadPreset(string $name): array
     {
         return $this->getApi()->deleteUploadPreset($name)->getArrayCopy();
     }

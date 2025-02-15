@@ -36,7 +36,7 @@ class DestroyAllTest extends TestCase
     {
         $image_count = $this->faker->numberBetween(1, 5);
         $public_ids = array_map(function () {
-            return $this->provider->upload($this->faker->image)->public_id;
+            return $this->provider->upload($this->faker->picsum())->public_id;
         }, range(1, $image_count));
 
         $this->provider->destroyAll();
@@ -52,13 +52,13 @@ class DestroyAllTest extends TestCase
     public function testTag()
     {
         $untagged = array_map(function () {
-            return $this->provider->upload($this->faker->image)->public_id;
+            return $this->provider->upload($this->faker->picsum())->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
         $tagged_one = array_map(function () {
-            return $this->provider->upload($this->faker->image, null, null, ['one'])->public_id;
+            return $this->provider->upload($this->faker->picsum(), null, null, ['one'])->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
         $tagged_two = array_map(function () {
-            return $this->provider->upload($this->faker->image, null, null, ['two'])->public_id;
+            return $this->provider->upload($this->faker->picsum(), null, null, ['two'])->public_id;
         }, range(1, $this->faker->numberBetween(1, 5)));
 
         $this->provider->destroyAll('one');

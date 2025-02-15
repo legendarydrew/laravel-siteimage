@@ -45,7 +45,7 @@ class GetTest extends TestCase
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $image          = $this->faker->image($this->provider->getFolder());
+        $image          = $this->faker->picsum($this->provider->getFolder());
 
         // Copy one of our placeholder images to the public folder.
         $ph = config('site-images.default_image');
@@ -105,7 +105,7 @@ class GetTest extends TestCase
     public function testWithExistingTransformation()
     {
         @mkdir($this->provider->getFolder() . 'thumbnail');
-        $this->faker->image($this->provider->getFolder() . 'thumbnail');
+        $this->faker->picsum($this->provider->getFolder() . 'thumbnail');
         $url = $this->provider->get($this->public_id, 'thumbnail');
 
         self::assertIsURL($url);
@@ -119,7 +119,7 @@ class GetTest extends TestCase
         $this->expectException(HttpException::class);
 
         @mkdir($this->provider->getFolder() . 'thumbnail');
-        $this->faker->image($this->provider->getFolder() . 'thumbnail');
+        $this->faker->picsum($this->provider->getFolder() . 'thumbnail');
         $this->provider->get($this->public_id, ResponseCode::RESPONSE_NOT_FOUND);
     }
 
@@ -129,7 +129,7 @@ class GetTest extends TestCase
     public function testWithTransformationWithoutWidth()
     {
         @mkdir($this->provider->getFolder() . 'without-width');
-        $this->faker->image($this->provider->getFolder() . 'without-width');
+        $this->faker->picsum($this->provider->getFolder() . 'without-width');
         $url = $this->provider->get($this->public_id, 'without-width');
 
         self::assertIsURL($url);
@@ -141,7 +141,7 @@ class GetTest extends TestCase
     public function testWithTransformationWithoutHeight()
     {
         @mkdir($this->provider->getFolder() . 'without-height');
-        $this->faker->image($this->provider->getFolder() . 'without-height');
+        $this->faker->picsum($this->provider->getFolder() . 'without-height');
         $url = $this->provider->get($this->public_id, 'without-height');
 
         self::assertIsURL($url);
@@ -153,7 +153,7 @@ class GetTest extends TestCase
     public function testWithTransformationWithoutDimensions()
     {
         @mkdir($this->provider->getFolder() . 'without-both');
-        $this->faker->image($this->provider->getFolder() . 'without-both');
+        $this->faker->picsum($this->provider->getFolder() . 'without-both');
         $url = $this->provider->get($this->public_id, 'without-both');
 
         self::assertIsURL($url);

@@ -21,7 +21,7 @@ class DestroyTest extends TestCase
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $this->image = $this->faker->image;
+        $this->image = $this->faker->picsum();
 
         $fs = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
