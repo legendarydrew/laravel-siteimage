@@ -14,20 +14,16 @@ use ReflectionException;
 abstract class SiteImageFormat
 {
     public const JPEG = 'jpg';
+    
     public const PNG = 'png';
 
-    /**
-     * @var null
-     */
-    private static $constCacheArray = null;
+    private static $constCacheArray;
 
     /**
      * Returns TRUE if the specified value name is valid for this enum.
      *
      * @param      $name
-     * @param bool $strict
      *
-     * @return bool
      * @throws ReflectionException
      * @static
      */
@@ -41,7 +37,7 @@ abstract class SiteImageFormat
 
         $keys = array_map('strtolower', array_keys($constants));
 
-        return in_array(strtolower($name), $keys);
+        return in_array(strtolower((string) $name), $keys);
     }
 
     /**
@@ -56,10 +52,11 @@ abstract class SiteImageFormat
         if (self::$constCacheArray == null) {
             self::$constCacheArray = [];
         }
-        $calledClass = get_called_class();
+        
+        $calledClass = static::class;
         if (!array_key_exists($calledClass, self::$constCacheArray)) {
-            $reflect = new ReflectionClass($calledClass);
-            self::$constCacheArray[$calledClass] = $reflect->getConstants();
+            $reflectionClass = new ReflectionClass($calledClass);
+            self::$constCacheArray[$calledClass] = $reflectionClass->getConstants();
         }
 
         return self::$constCacheArray[$calledClass];
@@ -69,9 +66,7 @@ abstract class SiteImageFormat
      * Returns TRUE if the specified value is valid for this enum.
      *
      * @param      $value
-     * @param bool $strict
      *
-     * @return bool
      * @throws ReflectionException
      * @static
      */
@@ -86,7 +81,6 @@ abstract class SiteImageFormat
      * Returns a list of values for this enum.
      *
      * @static
-     * @return array
      * @throws ReflectionException
      */
     public static function values(): array

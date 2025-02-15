@@ -13,14 +13,12 @@ interface SiteImageHostInterface
      * @param string|null $public_id
      * @param string|null $transformation [optional] the configured transformation to apply.
      * @param string      $format         [optional] the resulting image format.
-     * @return string
      */
     public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string;
 
     /**
      * Approve the specified image for general use.
      *
-     * @param string $public_id
      * @return mixed
      */
     public function approve(string $public_id);
@@ -36,16 +34,12 @@ interface SiteImageHostInterface
     /**
      * Reject the specified image.
      *
-     * @param string $public_id
      * @return mixed
      */
     public function reject(string $public_id);
 
     /**
      * Delete the specified image.
-     *
-     * @param string $public_id
-     * @return bool
      */
     public function destroy(string $public_id): bool;
 
@@ -96,15 +90,11 @@ interface SiteImageHostInterface
     /**
      * Build images transformations based on our configuration.
      * This is mainly for the benefit of cloud-hosted images (i.e. Cloudinary).
-     *
-     * @return void
      */
     public function buildTransformations(): void;
 
     /**
      * Returns a set of configured image transformations.
-     *
-     * @return array
      */
     public function getTransformations(): array;
 }

@@ -31,7 +31,7 @@ class LocalImageHost extends SiteImageHost
             {
                 return $this->transform($file, $transformation, $format);
             }
-            catch (NotReadableException $e)
+            catch (NotReadableException)
             {
                 // Return the [transformed] placeholder image.
                 return $this->transformPlaceholder($transformation);
@@ -54,9 +54,9 @@ class LocalImageHost extends SiteImageHost
 
     public function destroy(string $public_id): bool
     {
-        $fs = new Filesystem();
+        $filesystem = new Filesystem();
 
-        return $fs->delete([
+        return $filesystem->delete([
             $this->getFolder() . '**/' . basename($public_id),
             $this->getFolder() . $public_id,
         ]);
@@ -67,25 +67,25 @@ class LocalImageHost extends SiteImageHost
         if ($tag)
         {
             $images = $this->getTaggedImages($tag);
-            foreach ($images as $public_id)
+            foreach ($images as $image)
             {
-                $this->destroy($public_id);
+                $this->destroy($image);
             }
         }
         else
         {
-            $fs = new Filesystem();
-            $fs->cleanDirectory($this->getFolder());
+            $filesystem = new Filesystem();
+            $filesystem->cleanDirectory($this->getFolder());
         }
     }
 
     public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
     {
-        $filename = $this->sanitiseFilename(($cloud_folder ? "$cloud_folder--" : '') . basename($cloud_name ?? $image_filename));
-        if (!$extension = pathinfo($filename, PATHINFO_EXTENSION))
+        $filename = $this->sanitiseFilename(($cloud_folder ? $cloud_folder . '--' : '') . basename($cloud_name ?? $image_filename));
+        if (($extension = pathinfo($filename, PATHINFO_EXTENSION)) === '' || ($extension = pathinfo($filename, PATHINFO_EXTENSION)) === '0')
         {
             $extension = 'png';
-            $filename  .= ".$extension";
+            $filename  .= '.' . $extension;
         }
 
         // Copy the file over to the defined folder.
@@ -95,7 +95,7 @@ class LocalImageHost extends SiteImageHost
         {
             $filename = sprintf(
                 '%s_%s.%s',
-                pathinfo($filename, PATHINFO_FILENAME),
+                pathinfo((string) $filename, PATHINFO_FILENAME),
                 date('Ymdhis'),
                 $extension
             );
@@ -145,8 +145,6 @@ class LocalImageHost extends SiteImageHost
 
     /**
      * Returns the path to the configured image upload folder.
-     *
-     * @return string
      */
     public function getFolder(): string
     {
@@ -158,9 +156,7 @@ class LocalImageHost extends SiteImageHost
      * Create and returns a path in the configured upload directory, with trailing slash.
      *
      * @param string|null $subdirectory
-     * @param bool        $with_sep
      *
-     * @return string
      */
     protected function createFolder(string $subdirectory = null, bool $with_sep = true): string
     {
@@ -181,10 +177,7 @@ class LocalImageHost extends SiteImageHost
     /**
      * Returns the URL of the transformed specified image.
      *
-     * @param string      $image_file
      * @param string|null $transformation
-     * @param string      $format
-     * @return string
      */
     protected function transform(string $image_file, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
@@ -209,6 +202,7 @@ class LocalImageHost extends SiteImageHost
             {
                 $image->resize($config['width'] ?? null, $config['height'] ?? null);
             }
+
             $image->save($target_file, null, $format);
 
             return asset(str_replace(public_path(), '', $target_file));
@@ -222,7 +216,6 @@ class LocalImageHost extends SiteImageHost
      * Returns the URL of a transformed placeholder image.
      *
      * @param string|null $transformation
-     * @return string
      */
     protected function transformPlaceholder(string $transformation = null): string
     {
@@ -263,9 +256,6 @@ class LocalImageHost extends SiteImageHost
 
     /**
      * Returns a list of images tagged with the specified tag.
-     *
-     * @param string $tag
-     * @return array
      */
     protected function getTaggedImages(string $tag): array
     {
@@ -302,7 +292,7 @@ class LocalImageHost extends SiteImageHost
     public function allAssets(bool $with_tags = false): array
     {
         $files = glob($this->getFolder() . '/*.{jpg,png}', GLOB_BRACE);
-        return array_map(function ($row) use ($with_tags)
+        return array_map(function ($row) use ($with_tags): SiteImageUploadResponse
         {
             $public_id = basename($row);
             $image     = Image::make($row);
