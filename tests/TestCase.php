@@ -24,6 +24,11 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Set up image providers for Faker.
+        $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
+        $this->faker->addProvider(new \Mmo\Faker\LoremSpaceProvider($this->faker));
+        $this->faker->addProvider(new \Mmo\Faker\FakeimgProvider($this->faker));
+
         // Remove any existing test images.
         $fs       = new Filesystem();
         $provider = new LocalImageHost();
@@ -46,7 +51,7 @@ abstract class TestCase extends BaseTestCase
                 'cloudName' => 'test!',
                 'apiKey'    => 'damn',
                 'apiSecret' => 'what-the',
-                'scaling' => []
+                'scaling'   => []
             ],
             'transformations' => [
                 'thumbnail'      => [
@@ -73,7 +78,7 @@ abstract class TestCase extends BaseTestCase
                     'default_image' => 'img/placeholder.png'
                 ]
             ],
-            'default_image' => 'img/placeholder.png'
+            'default_image'   => 'img/placeholder.png'
         ]);
     }
 

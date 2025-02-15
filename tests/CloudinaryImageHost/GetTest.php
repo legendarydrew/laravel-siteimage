@@ -114,8 +114,8 @@ class GetTest extends TestCase
 
         $this->provider        = Mockery::mock(CloudinaryImageHost::class)->makePartial();
         $this->wrapper         = Mockery::mock(CloudinaryWrapper::class);
-        $this->image_url       = $this->faker->imageUrl;
-        $this->placeholder_url = $this->faker->imageUrl;
+        $this->image_url       = $this->faker->picsumUrl();
+        $this->placeholder_url = $this->faker->picsumUrl();
         $this->public_id       = basename($this->image_url);
 
         $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);

@@ -45,7 +45,7 @@ class GetPlaceholderTest extends TestCase
         parent::setUp();
 
         $this->provider = new LocalImageHost();
-        $this->image    = $this->faker->image($this->provider->getFolder());
+        $this->image    = $this->faker->picsum($this->provider->getFolder());
 
         // Copy one of our placeholder images to the public folder.
         $ph = config('site-images.default_image');

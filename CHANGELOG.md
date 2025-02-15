@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
+## 1.0.12 - 2025-02-15
+- consistently return a SiteImageUploadResponse when renaming images.
+
 ## 1.0.11 - 2024-12-25
 - ability to overwrite files with upload() for LocalImageHost.
 

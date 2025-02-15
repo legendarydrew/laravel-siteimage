@@ -16,7 +16,7 @@ class AllAssetsTest extends TestCase
         $this->provider = new LocalImageHost();
 
         for ($i = 1; $i <= 4; $i++) {
-            $this->provider->upload( $this->faker->image, null, null, ['superstar'] );
+            $this->provider->upload( $this->faker->picsum(), null, null, ['superstar'] );
         }
     }
 

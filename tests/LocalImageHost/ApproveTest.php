@@ -31,7 +31,7 @@ class ApproveTest extends TestCase
         $fs             = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
 
-        $this->image = $this->faker->image($this->provider->getFolder());
+        $this->image = $this->faker->picsum($this->provider->getFolder());
     }
 
     /**

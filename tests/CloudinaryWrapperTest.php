@@ -32,6 +32,7 @@ class CloudinaryWrapperTest extends TestCase
      */
     private $uploader;
 
+    private CloudinaryWrapper $cloudinary_wrapper;
     /**
      * @var Mockery\MockInterface
      */
@@ -341,7 +342,7 @@ class CloudinaryWrapperTest extends TestCase
     public function it_should_call_api_delete_derived_resources_when_calling_delete_derived_resources()
     {
         $pids = ['pid1', 'pid2'];
-        $this->api->shouldReceive('deleteDerivedAssets')->once()->with($pids, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('deleteDerivedAssets')->once()->with($pids)->andReturn(new ApiResponse([], []));
 
         $this->cloudinary_wrapper->deleteDerivedAssets($pids);
     }
@@ -557,7 +558,7 @@ class CloudinaryWrapperTest extends TestCase
         $updates        = ["allowed_for_strict" => 1];
 
         // given
-        $this->api->shouldReceive('updateTransformation')->once()->with($transformation, $updates, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('updateTransformation')->once()->with($transformation, $updates)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->updateTransformation($transformation, $updates);
@@ -570,7 +571,7 @@ class CloudinaryWrapperTest extends TestCase
         $definition = "c_fill,h_100,w_150";
 
         // given
-        $this->api->shouldReceive('createTransformation')->once()->with($name, $definition, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('createTransformation')->once()->with($name, $definition)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->createTransformation($name, $definition);
@@ -604,7 +605,7 @@ class CloudinaryWrapperTest extends TestCase
         $pid = 'pid1';
 
         // given
-        $this->api->shouldReceive('uploadMapping')->once()->with($pid, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('uploadMapping')->once()->with($pid)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->uploadMapping($pid);
@@ -630,7 +631,7 @@ class CloudinaryWrapperTest extends TestCase
         $pid = 'pid1';
 
         // given
-        $this->api->shouldReceive('deleteUploadMapping')->once()->with($pid, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('deleteUploadMapping')->once()->with($pid)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->deleteUploadMapping($pid);
@@ -679,7 +680,7 @@ class CloudinaryWrapperTest extends TestCase
         $pid = 'pid1';
 
         // given
-        $this->api->shouldReceive('createUploadPreset')->once()->with($pid, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('createUploadPreset')->once()->with($pid)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->createUploadPreset($pid);
@@ -693,7 +694,7 @@ class CloudinaryWrapperTest extends TestCase
         $pid = 'pid1';
 
         // given
-        $this->api->shouldReceive('deleteUploadPreset')->once()->with($pid, [])->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('deleteUploadPreset')->once()->with($pid)->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->deleteUploadPreset($pid);
