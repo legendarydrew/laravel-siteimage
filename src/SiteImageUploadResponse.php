@@ -11,102 +11,102 @@ class SiteImageUploadResponse
     /**
      * @var string the asset ID of the asset.
      */
-    public string $asset_id;
+    public string $asset_id = '';
 
     /**
      * @var string the public ID of the asset.
      */
-    public string $public_id;
+    public string $public_id = '';
 
     /**
      * @var int the asset's version number.
      */
-    public int $version;
+    public int $version = 0;
 
     /**
      * @var string the asset's version ID, a hexadecimal code.
      */
-    public string $version_id;
+    public string $version_id = '';
 
     /**
      * @var string the asset's signature.
      */
-    public string $signature;
+    public string $signature = '';
 
     /**
      * @var int the width of the asset in pixels.
      */
-    public int $width;
+    public int $width = 0;
 
     /**
      * @var int the height of the asset in pixels.
      */
-    public int $height;
+    public int $height = 0;
 
     /**
      * @var string the asset's format, as a file extension without the dot.
      */
-    public string $format;
+    public string $format = '';
 
     /**
      * @var string the type of uploaded asset.
      */
-    public string $resource_type;
+    public string $resource_type = '';
 
     /**
      * @var string a timestamp of the asset's creation date.
      */
-    public string $created_at;
+    public string $created_at = '';
 
     /**
      * @var string[] a list of associated tags.
      */
-    public array $tags;
+    public array $tags = [];
 
     /**
      * @var int the size of the asset in bytes.
      */
-    public int $bytes;
+    public int $bytes = 0;
 
     /**
      * @var string the type of asset.
      */
-    public string $type;
+    public string $type = '';
 
     /**
      * @var string the asset's eTag, as a hexadecimal code.
      */
-    public string $etag;
+    public string $etag = '';
 
     /**
      * @var bool whether this asset is a placeholder asset.
      */
-    public bool $placeholder;
+    public bool $placeholder = false;
 
     /**
      * @var string the HTTP URL to this asset.
      */
-    public string $url;
+    public string $url = '';
 
     /**
      * @var string the HTTPS URL to this asset.
      */
-    public $secure_url;
+    public $secure_url = '';
 
     /**
      * @var bool whether this asset has overwritten an existing asset.
      */
-    public bool $overwritten;
+    public bool $overwritten = false;
 
     /**
      * @var string the original asset filename.
      */
-    public string $original_filename;
+    public string $original_filename = '';
 
     /**
      * @var string the API key associated with this asset.
      */
-    public string $api_key;
+    public string $api_key = '';
 
     public function __construct(array $props = [])
     {
