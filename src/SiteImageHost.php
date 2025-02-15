@@ -59,7 +59,7 @@ abstract class SiteImageHost implements SiteImageHostInterface
      * @param string $public_id
      * @param string $new_public_id
      * @param bool   $overwrite
-     * @return mixed
+     * @return SiteImageUploadResponse
      */
-    abstract public function rename(string $public_id, string $new_public_id, bool $overwrite = false);
+    abstract public function rename(string $public_id, string $new_public_id, bool $overwrite = false): SiteImageUploadResponse;
 }

@@ -41,12 +41,12 @@ class LocalImageHost extends SiteImageHost
         return $this->transformPlaceholder($transformation);
     }
 
-    public function approve(string $public_id)
+    public function approve(string $public_id): void
     {
         // Nothing to do here: the image has been uploaded.
     }
 
-    public function reject(string $public_id)
+    public function reject(string $public_id): void
     {
         // Delete the image.
         $this->destroy($public_id);
@@ -324,7 +324,7 @@ class LocalImageHost extends SiteImageHost
         }, $files);
     }
 
-    public function rename(string $public_id, string $new_public_id, bool $overwrite = false): array
+    public function rename(string $public_id, string $new_public_id, bool $overwrite = false): SiteImageUploadResponse
     {
         // Check if the image exists.
         $original_file = $this->getFolder() . $public_id;
@@ -356,6 +356,6 @@ class LocalImageHost extends SiteImageHost
             $this->getFolder() . '**/' . basename($public_id)
         ]);
 
-        return ['public_id' => $new_public_id];
+        return new SiteImageUploadResponse(['public_id' => $new_public_id]);
     }
 }

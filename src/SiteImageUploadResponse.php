@@ -11,82 +11,82 @@ class SiteImageUploadResponse
     /**
      * @var string the asset ID of the asset.
      */
-    public $asset_id;
+    public string $asset_id;
 
     /**
      * @var string the public ID of the asset.
      */
-    public $public_id;
+    public string $public_id;
 
     /**
      * @var int the asset's version number.
      */
-    public $version;
+    public int $version;
 
     /**
      * @var string the asset's version ID, a hexadecimal code.
      */
-    public $version_id;
+    public string $version_id;
 
     /**
      * @var string the asset's signature.
      */
-    public $signature;
+    public string $signature;
 
     /**
      * @var int the width of the asset in pixels.
      */
-    public $width;
+    public int $width;
 
     /**
      * @var int the height of the asset in pixels.
      */
-    public $height;
+    public int $height;
 
     /**
      * @var string the asset's format, as a file extension without the dot.
      */
-    public $format;
+    public string $format;
 
     /**
      * @var string the type of uploaded asset.
      */
-    public $resource_type;
+    public string $resource_type;
 
     /**
      * @var string a timestamp of the asset's creation date.
      */
-    public $created_at;
+    public string $created_at;
 
     /**
      * @var string[] a list of associated tags.
      */
-    public $tags;
+    public array $tags;
 
     /**
      * @var int the size of the asset in bytes.
      */
-    public $bytes;
+    public int $bytes;
 
     /**
      * @var string the type of asset.
      */
-    public $type;
+    public string $type;
 
     /**
      * @var string the asset's eTag, as a hexadecimal code.
      */
-    public $etag;
+    public string $etag;
 
     /**
      * @var bool whether this asset is a placeholder asset.
      */
-    public $placeholder;
+    public bool $placeholder;
 
     /**
      * @var string the HTTP URL to this asset.
      */
-    public $url;
+    public string $url;
 
     /**
      * @var string the HTTPS URL to this asset.
@@ -96,17 +96,17 @@ class SiteImageUploadResponse
     /**
      * @var bool whether this asset has overwritten an existing asset.
      */
-    public $overwritten;
+    public bool $overwritten;
 
     /**
      * @var string the original asset filename.
      */
-    public $original_filename;
+    public string $original_filename;
 
     /**
      * @var string the API key associated with this asset.
      */
-    public $api_key;
+    public string $api_key;
 
     public function __construct(array $props = [])
     {
