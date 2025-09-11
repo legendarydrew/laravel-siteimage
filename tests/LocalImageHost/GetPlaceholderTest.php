@@ -6,39 +6,24 @@
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-/**
- * GetPlaceholderTest
- *
- * @package PZL\SiteImage\Tests\LocalImageHost
- */
+#[CoversClass(LocalImageHost::class)]
 class GetPlaceholderTest extends TestCase
 {
     use WithFaker;
 
-    /**
-     * @var LocalImageHost
-     */
-    private $provider;
+    private LocalImageHost $provider;
 
-    /**
-     * @var string
-     */
-    private $image;
+    private string $image;
 
-    /**
-     * @var string
-     */
-    private $placeholder_image;
+    private string $placeholder_image;
 
-    /**
-     * @var string
-     */
-    private $placeholder_url;
+    private string $placeholder_url;
 
     protected function setUp(): void
     {
@@ -57,9 +42,6 @@ class GetPlaceholderTest extends TestCase
         $this->placeholder_url   = asset($ph);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testPlaceholderExists()
     {
         $url = $this->provider->getPlaceholder();
@@ -68,9 +50,6 @@ class GetPlaceholderTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testPlaceholderWithTransformation()
     {
         $url = $this->provider->getPlaceholder('thumbnail');
@@ -78,9 +57,6 @@ class GetPlaceholderTest extends TestCase
         self::assertIsURL($url);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testWithInvalidTransformation()
     {
         $this->expectException(HttpException::class);
@@ -88,9 +64,6 @@ class GetPlaceholderTest extends TestCase
         $this->provider->getPlaceholder(ResponseCode::RESPONSE_NOT_FOUND);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testPlaceholderDoesNotExist()
     {
         @unlink($this->placeholder_image);

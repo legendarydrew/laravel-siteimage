@@ -4,17 +4,16 @@ namespace PZL\SiteImage\Tests\LocalImageHost;
 
 
 use Illuminate\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
+#[CoversClass(LocalImageHost::class)]
 class DestroyTest extends TestCase
 {
-    /**
-     * @var LocalImageHost
-     */
-    private $provider;
+    private LocalImageHost $provider;
 
-    private $image;
+    private string $image;
 
     protected function setUp(): void
     {
@@ -27,9 +26,6 @@ class DestroyTest extends TestCase
         $fs->cleanDirectory($this->provider->getFolder());
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testDestroy()
     {
         $public_id = basename($this->image);
