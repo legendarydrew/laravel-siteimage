@@ -7,11 +7,13 @@ use Cloudinary\Api\Admin\AdminApi;
 use Cloudinary\Api\ApiResponse;
 use Exception;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Depends;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\Host\CloudinaryImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
+#[CoversClass(CloudinaryImageHost::class)]
 class BuildTransformationsTest extends TestCase
 {
 

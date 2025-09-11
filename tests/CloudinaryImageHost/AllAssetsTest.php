@@ -9,20 +9,16 @@ use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Cloudinary;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\Host\CloudinaryImageHost;
 use PZL\SiteImage\SiteImageUploadResponse;
 use PZL\SiteImage\Tests\TestCase;
-use function PHPUnit\Framework\assertCount;
 
+#[CoversClass(CloudinaryImageHost::class)]
 class AllAssetsTest extends TestCase
 {
     use WithFaker;
-
-    /**
-     * @var Mockery\MockInterface
-     */
-    private $media;
 
     public function setUp(): void
     {
@@ -50,13 +46,9 @@ class AllAssetsTest extends TestCase
         Mockery::close();
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
-     */
     public function testAllAssetsResponse()
     {
-        // TODO perhaps a trait for mocking a Cloudinary upload response.
-        $data         = [
+        $data = [
             'resources' => [
                 [
                     'public_id' => $this->faker->uuid,
@@ -65,14 +57,11 @@ class AllAssetsTest extends TestCase
                 ]
             ]
         ];
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($data);
-        $this->api->shouldReceive('assets')->andReturn($api_response);
+        $this->api->shouldReceive('assets')->andReturn(new ApiResponse($data, []));
 
         $response = $this->provider->allAssets();
 
-        assertCount(1, $response);
+        self::assertCount(1, $response);
         self::assertContainsOnlyInstancesOf(SiteImageUploadResponse::class, $response);
-
     }
 }

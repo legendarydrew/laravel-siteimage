@@ -7,39 +7,22 @@ namespace PZL\SiteImage\Tests\CloudinaryImageHost;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
-use PZL\SiteImage\CloudinaryWrapper;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\CloudinaryImageHost;
-use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
-/**
- * GetPlaceholderTest
- *
- * @package PZL\SiteImage\Tests\LocalImageHost
- */
+#[CoversClass(CloudinaryImageHost::class)]
 class GetPlaceholderTest extends TestCase
 {
     use WithFaker;
 
-    /**
-     * @var LocalImageHost
-     */
-    private $provider;
+    private CloudinaryImageHost $provider;
 
-    /**
-     * @var string
-     */
-    private $image;
+    private string $image;
 
-    /**
-     * @var string
-     */
-    private $placeholder_image;
+    private string $placeholder_image;
 
-    /**
-     * @var string
-     */
-    private $placeholder_url;
+    private string $placeholder_url;
 
     protected function setUp(): void
     {
@@ -51,9 +34,6 @@ class GetPlaceholderTest extends TestCase
         $this->provider->shouldReceive('getPlaceholder')->andReturn($this->placeholder_url);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
-     */
     public function testPlaceholderExists()
     {
         $url = $this->provider->getPlaceholder();
@@ -62,9 +42,6 @@ class GetPlaceholderTest extends TestCase
         self::assertEquals($this->placeholder_url, $url);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
-     */
     public function testPlaceholderWithTransformation()
     {
         $url = $this->provider->getPlaceholder('thumbnail');

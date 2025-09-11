@@ -6,12 +6,11 @@
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
-/**
- * UploadTest.
- */
+#[CoversClass(LocalImageHost::class)]
 class UploadTest extends TestCase
 {
     /**
@@ -42,9 +41,6 @@ class UploadTest extends TestCase
         $this->filename = basename($this->image);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testFileToRootFolder()
     {
         $public_id = $this->provider->upload($this->image)->public_id;
@@ -53,9 +49,6 @@ class UploadTest extends TestCase
         self::assertFileExists($this->provider->getFolder() . $this->filename);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testFileToChildFolder()
     {
         $dir             = $this->faker->firstName;
@@ -65,9 +58,6 @@ class UploadTest extends TestCase
         self::assertFileExists($this->provider->getFolder() . $target_filename);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testFileWithTags()
     {
         $tag           = $this->faker->word;
@@ -76,9 +66,6 @@ class UploadTest extends TestCase
         self::assertContains($public_id, $tagged_images);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testExistingFile()
     {
         $old_public_id = $this->provider->upload($this->image)->public_id;
@@ -89,9 +76,6 @@ class UploadTest extends TestCase
         self::assertFileExists(sprintf('%s/%s', $this->provider->getFolder(), $new_public_id));
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testUrl()
     {
         $this->image = $this->faker->picsum();
@@ -100,9 +84,6 @@ class UploadTest extends TestCase
         self::assertFileExists($this->provider->getFolder() . $public_id);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testBase64()
     {
         $data      = base64_encode(file_get_contents($this->image));
@@ -112,9 +93,6 @@ class UploadTest extends TestCase
         self::assertFileExists($this->provider->getFolder() . $this->filename);
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testEagerTransformations()
     {
         $transformations = ['thumbnail'];

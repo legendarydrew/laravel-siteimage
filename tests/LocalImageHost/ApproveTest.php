@@ -5,22 +5,18 @@ namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
+#[CoversClass(LocalImageHost::class)]
 class ApproveTest extends TestCase
 {
     use WithFaker;
 
-    /**
-     * @var LocalImageHost
-     */
-    private $provider;
+    private LocalImageHost $provider;
 
-    /**
-     * @var string
-     */
-    private $image;
+    private string $image;
 
 
     protected function setUp(): void
@@ -34,9 +30,6 @@ class ApproveTest extends TestCase
         $this->image = $this->faker->picsum($this->provider->getFolder());
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testApprovesImage()
     {
         $public_id = basename($this->image);

@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-siteimage` will be documented in this file.
 
+## 1.0.13 - 2025-09-11
+RIP Charlie Kirk.
+- updated Cloudinary SDK to version 3.
+- buildTransformations() should remove unused transformations (according to the config file) on Cloudinary.
+
 ## 1.0.12 - 2025-02-15
 - consistently return a SiteImageUploadResponse when renaming images.
 
