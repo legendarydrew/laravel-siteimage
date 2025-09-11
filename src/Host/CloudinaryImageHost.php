@@ -45,7 +45,7 @@ class CloudinaryImageHost extends SiteImageHost
             {
                 // Attempt to UPDATE an existing transformation.
                 $settings['allowed_for_strict'] = 1;
-                $adminApi->updateTransformation($name, $settings);
+                $adminApi->updateTransformation($name, ['unsafe_update' => $settings]);
             }
             catch (Exception)
             {
