@@ -28,7 +28,6 @@ class BuildTransformationsTest extends TestCase
         $this->wrapper->shouldReceive('getApi')->andReturn($this->api);
         $this->provider->shouldReceive('getCloudinaryWrapper')->andReturn($this->wrapper);
 
-
         $this->placeholder_url = $this->faker->picsumUrl();
         $this->transformations = $this->provider->getTransformations();
     }
@@ -44,6 +43,9 @@ class BuildTransformationsTest extends TestCase
     #[Depends('testTransformationsArePresent')]
     public function testUpdatesTransformations()
     {
+        $this->api->shouldReceive('transformations')->andReturn(new ApiResponse([
+            'transformations' => [],
+        ], []));
         $this->api->shouldReceive('updateTransformation')
                   ->times(count($this->transformations))
                   ->andReturn(new ApiResponse(['message' => 'created'], []));
@@ -57,11 +59,37 @@ class BuildTransformationsTest extends TestCase
     #[Depends('testTransformationsArePresent')]
     public function testCreatesTransformations()
     {
+        $this->api->shouldReceive('transformations')->andReturn(new ApiResponse([
+            'transformations' => [],
+        ], []));
         $this->api->shouldReceive('updateTransformation')
                   ->andThrow(new Exception('Create instead.'));
         $this->api->shouldReceive('createTransformation')
                   ->times(count($this->transformations))
                   ->andReturn(new ApiResponse(['message' => 'created'], []));
+
+        $this->provider->buildTransformations();
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Depends('testTransformationsArePresent')]
+    public function testDeletesExtraTransformations()
+    {
+        $this->api->shouldReceive('transformations')->andReturn(new ApiResponse([
+            'transformations' => [
+                ['name' => 'delete_me'],
+            ],
+        ], []));
+        $this->api->shouldReceive('updateTransformation')
+                  ->times(count($this->transformations))
+                  ->andReturn(new ApiResponse(['message' => 'created'], []));
+
+        $this->api->shouldReceive('deleteTransformation')
+                  ->with($this->equalTo('delete_me'))
+                  ->once()
+                  ->andReturn(new ApiResponse(['message' => 'deleted'], []));
 
         $this->provider->buildTransformations();
     }

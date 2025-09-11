@@ -31,7 +31,6 @@ class CloudinaryImageHost extends SiteImageHost
      * Build images transformations based on our configuration.
      *
      * @throws Exception
-     * @todo this method should also remove transformations not in the configuration.
      */
     public function buildTransformations(): void
     {
@@ -53,6 +52,37 @@ class CloudinaryImageHost extends SiteImageHost
                 $adminApi->createTransformation($name, $settings);
             }
         }
+
+        // Remove any named transformations that aren't defined in the configuration file.
+        $live_transformations        = $this->getLiveTransformations();
+        $not_defined_transformations = array_diff($live_transformations, array_keys($transformations));
+        foreach ($not_defined_transformations as $name)
+        {
+            $adminApi->deleteTransformation($name);
+        }
+
+    }
+
+    /**
+     * Returns a list of named transformation names defined in Cloudinary.
+     * https://cloudinary.com/documentation/admin_api#get_transformations
+     *
+     * @return array
+     */
+    public function getLiveTransformations(): array
+    {
+        $adminApi        = $this->getCloudinaryWrapper()->getApi();
+        $transformations = [];
+        $cursor = null;
+        do
+        {
+            $response        = $adminApi->transformations(['cursor' => $cursor, 'max_results' => 100, 'named' => true])->getArrayCopy();
+            $transformations = array_merge($transformations, array_map(fn($t) => $t['name'], $response['transformations']));
+            $cursor = $response['next_cursor'] ?? null;
+        }
+        while ($cursor);
+
+        return $transformations;
     }
 
     public function getCloudinaryWrapper(): CloudinaryWrapper
@@ -76,8 +106,8 @@ class CloudinaryImageHost extends SiteImageHost
         }
 
         // Upload the image!
-        $cloud_name ??= $this->sanitiseFilename($image_filename);
-        $cloudinaryWrapper    = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
+        $cloud_name        ??= $this->sanitiseFilename($image_filename);
+        $cloudinaryWrapper = $this->getCloudinaryWrapper()->upload($image_filename, $cloud_name, $parameters, $tags);
 
         // Return the upload response.
         return SiteImageUploadResponse::fromCloudinaryWrapper($cloudinaryWrapper);
