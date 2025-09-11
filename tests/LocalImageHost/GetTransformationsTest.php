@@ -2,15 +2,14 @@
 
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
+#[CoversClass(LocalImageHost::class)]
 class GetTransformationsTest extends TestCase
 {
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testReturnsTransformations()
     {
         $provider = new LocalImageHost();

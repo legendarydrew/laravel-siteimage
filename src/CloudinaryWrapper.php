@@ -535,13 +535,11 @@ class CloudinaryWrapper
      */
     public function createUploadPreset(string $name): array
     {
-        return $this->getApi()->createUploadPreset($name)->getArrayCopy();
+        return $this->getApi()->createUploadPreset(['name' => $name])->getArrayCopy();
     }
 
     /**
      * Delete upload preset
-     *
-     * @throws ApiError
      */
     public function deleteUploadPreset(string $name): array
     {

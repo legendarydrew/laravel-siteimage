@@ -11,30 +11,27 @@ use Cloudinary\Cloudinary;
 use Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\Host\CloudinaryImageHost;
 use PZL\SiteImage\SiteImageUploadResponse;
 use PZL\SiteImage\Tests\TestCase;
 
+#[CoversClass(CloudinaryImageHost::class)]
 class UploadTest extends TestCase
 {
     use WithFaker;
-
-    /**
-     * @var Mockery\MockInterface
-     */
-    private $media;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->provider = Mockery::mock(CloudinaryImageHost::class);
-        $api            = Mockery::mock(AdminApi::class);
-        $cloudinary     = Mockery::mock(Cloudinary::class);
-        $uploader = Mockery::mock(UploadApi::class);
+        $this->provider           = Mockery::mock(CloudinaryImageHost::class);
+        $api                      = Mockery::mock(AdminApi::class);
+        $cloudinary               = Mockery::mock(Cloudinary::class);
+        $uploader                 = Mockery::mock(UploadApi::class);
         $this->cloudinary_wrapper = Mockery::mock(CloudinaryWrapper::class);
-        $this->media = Mockery::mock('overload:' . Media::class);
+        $this->media              = Mockery::mock('overload:' . Media::class);
 
         $this->cloudinary_wrapper->shouldReceive('getApi')->andReturn($api);
         $this->cloudinary_wrapper->shouldReceive('getCloudinary')->andReturn($cloudinary);
@@ -52,20 +49,16 @@ class UploadTest extends TestCase
     }
 
     /**
-     * @covers \PZL\SiteImage\Host\CloudinaryImageHost
      * @throws Exception
      */
     public function testUploadResponse()
     {
-        // TODO perhaps a trait for mocking a Cloudinary upload response.
         $data = [
             'public_id' => $this->faker->uuid,
-            'width' => $this->faker->numberBetween(10, 800),
-            'height' => $this->faker->numberBetween(10, 800)
+            'width'     => $this->faker->numberBetween(10, 800),
+            'height'    => $this->faker->numberBetween(10, 800)
         ];
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($data);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn(new ApiResponse($data, []));
         $this->cloudinary_wrapper->shouldReceive('upload')->andReturnSelf();
 
         $response = $this->provider->upload($this->faker->picsum());

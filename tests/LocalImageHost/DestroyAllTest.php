@@ -7,18 +7,14 @@ namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
 use Intervention\Image\Facades\Image;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
 
-/**
- * DestroyAllTest.
- */
+#[CoversClass(LocalImageHost::class)]
 class DestroyAllTest extends TestCase
 {
-    /**
-     * @var LocalImageHost
-     */
-    private $provider;
+    private LocalImageHost $provider;
 
     protected function setUp(): void
     {
@@ -29,9 +25,6 @@ class DestroyAllTest extends TestCase
         $fs->cleanDirectory($this->provider->getFolder());
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testAll()
     {
         $image_count = $this->faker->numberBetween(1, 5);
@@ -46,9 +39,6 @@ class DestroyAllTest extends TestCase
         }
     }
 
-    /**
-     * @covers \PZL\SiteImage\Host\LocalImageHost
-     */
     public function testTag()
     {
         $untagged = array_map(function () {

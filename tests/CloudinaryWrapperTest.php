@@ -9,6 +9,7 @@ use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Asset\Media;
 use Cloudinary\Cloudinary;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageUploadResponse;
 
@@ -18,25 +19,17 @@ use PZL\SiteImage\SiteImageUploadResponse;
  * and before that https://github.com/teepluss/laravel4-cloudinary
  *
  * @package PZL\SiteImage\Tests
- * @covers  \PZL\SiteImage\CloudinaryWrapper
  */
+#[CoversClass(CloudinaryWrapper::class)]
 class CloudinaryWrapperTest extends TestCase
 {
-    /**
-     * @var Mockery\Mock
-     */
-    private $api;
+    private AdminApi|Mockery\Mock $api;
 
-    /**
-     * @var Mockery\Mock
-     */
-    private $uploader;
+    private UploadApi|Mockery\Mock $uploader;
 
     private CloudinaryWrapper $cloudinary_wrapper;
-    /**
-     * @var Mockery\MockInterface
-     */
-    private $media;
+
+    private Mockery\MockInterface $media;
 
     public function setUp(): void
     {
@@ -60,8 +53,7 @@ class CloudinaryWrapperTest extends TestCase
         Mockery::close();
     }
 
-    /** @test */
-    public function it_should_set_uploaded_result_when_uploading_picture()
+    public function test_it_should_set_uploaded_result_when_uploading_picture()
     {
         // given
         $filename         = 'filename';
@@ -71,14 +63,12 @@ class CloudinaryWrapperTest extends TestCase
         ];
         $expected_result  = ['public_id' => '123456789'];
 
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($expected_result);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn(new ApiResponse($expected_result, []));
 
         $this->uploader->shouldReceive('upload')
                        ->once()
                        ->with($filename, $defaults_options)
-                       ->andReturn($expected_result);
+                       ->andReturn(new ApiResponse($expected_result, []));
 
         // when
         $this->cloudinary_wrapper->upload($filename);
@@ -88,10 +78,10 @@ class CloudinaryWrapperTest extends TestCase
         self::assertEquals($expected_result['public_id'], $result['public_id']);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_set_uploaded_result_when_uploading_picture_unsigned()
+    public function test_it_should_set_uploaded_result_when_uploading_picture_unsigned()
     {
         // given
         $filename         = 'filename';
@@ -104,14 +94,12 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($expected_result);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn(new ApiResponse($expected_result, []));
 
         $this->uploader->shouldReceive('unsignedUpload')
                        ->once()
                        ->with($filename, $upload_preset, $defaults_options)
-                       ->andReturn($expected_result);
+                       ->andReturn(new ApiResponse($expected_result, []));
 
         // when
         $this->cloudinary_wrapper->unsignedUpload($filename, null, $upload_preset);
@@ -124,8 +112,7 @@ class CloudinaryWrapperTest extends TestCase
         self::assertEquals($expected_result['public_id'], $result['public_id']);
     }
 
-    /** @test */
-    public function it_should_set_uploaded_result_when_uploading_private_picture()
+    public function test_it_should_set_uploaded_result_when_uploading_private_picture()
     {
         // given
         $filename         = 'filename';
@@ -137,14 +124,12 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($expected_result);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn(new ApiResponse($expected_result, []));
 
         $this->uploader->shouldReceive('upload')
                        ->once()
                        ->with($filename, $defaults_options)
-                       ->andReturn($expected_result);
+                       ->andReturn(new ApiResponse($expected_result, []));
 
         // when
         $this->cloudinary_wrapper->upload($filename, null, ['type' => 'private']);
@@ -154,8 +139,7 @@ class CloudinaryWrapperTest extends TestCase
         self::assertEquals($expected_result['public_id'], $result['public_id']);
     }
 
-    /** @test */
-    public function it_should_returns_image_url_when_calling_show()
+    public function test_it_should_returns_image_url_when_calling_show()
     {
         // given
         $filename = 'filename';
@@ -166,22 +150,20 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->show($filename);
     }
 
-    /** @test */
-    public function it_should_returns_https_image_url_when_calling_secure_show()
+    public function test_it_should_returns_https_image_url_when_calling_secure_show()
     {
         // given
         $filename = 'filename';
         $this->media->shouldReceive('fromParams')
                     ->once()
-                    ->with($filename, ['secure' => TRUE])
+                    ->with($filename, ['secure' => true])
                     ->andReturn('woah');
 
         // when
         $this->cloudinary_wrapper->secureShow($filename);
     }
 
-    /** @test */
-    public function it_should_returns_image_url_when_calling_show_private_url()
+    public function test_it_should_returns_image_url_when_calling_show_private_url()
     {
         // given
         $filename = 'filename';
@@ -191,8 +173,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->showPrivateUrl($filename, 'png');
     }
 
-    /** @test */
-    public function it_should_returns_image_url_when_calling_private_download_url()
+    public function test_it_should_returns_image_url_when_calling_private_download_url()
     {
         // given
         $filename = 'filename';
@@ -202,8 +183,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->privateDownloadUrl($filename, 'png');
     }
 
-    /** @test */
-    public function it_should_call_api_rename_when_calling_rename()
+    public function test_it_should_call_api_rename_when_calling_rename()
     {
         // given
         $from = 'from';
@@ -215,8 +195,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->rename($from, $to);
     }
 
-    /** @test */
-    public function it_should_call_api_destroy_when_calling_destroy_image()
+    public function test_it_should_call_api_destroy_when_calling_destroy_image()
     {
         // given
         $pid = 'pid';
@@ -226,8 +205,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->destroyImage($pid);
     }
 
-    /** @test */
-    public function it_should_call_api_destroy_when_calling_destroy()
+    public function test_it_should_call_api_destroy_when_calling_destroy()
     {
         // given
         $pid = 'pid';
@@ -237,8 +215,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->destroy($pid);
     }
 
-    /** @test */
-    public function verify_delete_alias_returns_boolean()
+    public function test_verify_delete_alias_returns_boolean()
     {
         // given
         $pid = 'pid';
@@ -249,8 +226,7 @@ class CloudinaryWrapperTest extends TestCase
         self::assertTrue($deleted);
     }
 
-    /** @test */
-    public function it_should_call_api_add_tag_when_calling_add_tag()
+    public function test_it_should_call_api_add_tag_when_calling_add_tag()
     {
         $pids = ['pid1', 'pid2'];
         $tag  = 'tag';
@@ -260,8 +236,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->addTag($tag, $pids);
     }
 
-    /** @test */
-    public function it_should_call_api_remove_tag_when_calling_add_tag()
+    public function test_it_should_call_api_remove_tag_when_calling_add_tag()
     {
         $pids = ['pid1', 'pid2'];
         $tag  = 'tag';
@@ -271,8 +246,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->removeTag($tag, $pids);
     }
 
-    /** @test */
-    public function it_should_call_api_rename_tag_when_calling_add_tag()
+    public function test_it_should_call_api_rename_tag_when_calling_add_tag()
     {
         $pids = ['pid1', 'pid2'];
         $tag  = 'tag';
@@ -282,10 +256,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->replaceTag($tag, $pids);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_resources_when_calling_destroy_images()
+    public function test_it_should_call_api_delete_resources_when_calling_destroy_images()
     {
         $pids = ['pid1', 'pid2'];
         $this->api->shouldReceive('deleteAssets')->once()->with($pids, [])->andReturn(new ApiResponse([], []));
@@ -293,10 +267,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->destroyImages($pids);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_resources_when_calling_delete_resources()
+    public function test_it_should_call_api_delete_resources_when_calling_delete_resources()
     {
         $pids = ['pid1', 'pid2'];
         $this->api->shouldReceive('deleteAssets')->once()->with($pids, [])->andReturn(new ApiResponse([], []));
@@ -304,10 +278,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteAssets($pids);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_resources_by_prefix_when_calling_delete_resources_by_prefix()
+    public function test_it_should_call_api_delete_resources_by_prefix_when_calling_delete_resources_by_prefix()
     {
         $prefix = 'prefix';
         $this->api->shouldReceive('deleteAssetsByPrefix')->once()->with($prefix, [])->andReturn(new ApiResponse([], []));
@@ -315,20 +289,20 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteAssetsByPrefix($prefix);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_all_resources_when_calling_delete_all_resources()
+    public function test_it_should_call_api_delete_all_resources_when_calling_delete_all_resources()
     {
         $this->api->shouldReceive('deleteAllAssets')->once()->with([])->andReturn(new ApiResponse([], []));
 
         $this->cloudinary_wrapper->deleteAllAssets();
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_resources_by_tag_when_calling_delete_resources_by_tag()
+    public function test_it_should_call_api_delete_resources_by_tag_when_calling_delete_resources_by_tag()
     {
         $tag = 'tag1';
         $this->api->shouldReceive('deleteAssetsByTag')->once()->with($tag, [])->andReturn(new ApiResponse([], []));
@@ -336,10 +310,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteAssetsByTag($tag);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_call_api_delete_derived_resources_when_calling_delete_derived_resources()
+    public function test_it_should_call_api_delete_derived_resources_when_calling_delete_derived_resources()
     {
         $pids = ['pid1', 'pid2'];
         $this->api->shouldReceive('deleteDerivedAssets')->once()->with($pids)->andReturn(new ApiResponse([], []));
@@ -347,10 +321,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteDerivedAssets($pids);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_set_uploaded_result_when_uploading_video()
+    public function test_it_should_set_uploaded_result_when_uploading_video()
     {
         // given
         $filename         = 'filename';
@@ -362,11 +336,9 @@ class CloudinaryWrapperTest extends TestCase
 
         $expected_result = ['public_id' => '123456789'];
 
-        $api_response = Mockery::mock(ApiResponse::class);
-        $api_response->shouldReceive('getArrayCopy')->andReturn($expected_result);
-        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn($api_response);
+        $this->cloudinary_wrapper->shouldReceive('getResult')->andReturn(new ApiResponse($expected_result, []));
 
-        $this->uploader->shouldReceive('upload')->once()->with($filename, $defaults_options)->andReturn($expected_result);
+        $this->uploader->shouldReceive('upload')->once()->with($filename, $defaults_options)->andReturn(new ApiResponse($expected_result, []));
 
         // when
         $this->cloudinary_wrapper->uploadVideo($filename);
@@ -379,8 +351,7 @@ class CloudinaryWrapperTest extends TestCase
         self::assertEquals($expected_result['public_id'], $result['public_id']);
     }
 
-    /** @test */
-    public function it_should_call_api_create_archive_when_generating_archive()
+    public function test_it_should_call_api_create_archive_when_generating_archive()
     {
         // given
         $this->uploader->shouldReceive('createArchive')->once()->with(
@@ -391,8 +362,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->createArchive(['tag' => 'kitten']);
     }
 
-    /** @test */
-    public function it_should_call_api_create_archive_with_correct_archive_name()
+    public function test_it_should_call_api_create_archive_with_correct_archive_name()
     {
         // given
         $this->uploader->shouldReceive('createArchive')->once()->with(
@@ -403,8 +373,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->createArchive(['tag' => 'kitten'], 'kitten_archive');
     }
 
-    /** @test */
-    public function it_should_call_api_download_archive_url_when_generating_archive()
+    public function test_it_should_call_api_download_archive_url_when_generating_archive()
     {
         // given
         $this->uploader->shouldReceive('downloadArchiveUrl')->once()->with(
@@ -415,8 +384,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->downloadArchiveUrl(['tag' => 'kitten']);
     }
 
-    /** @test */
-    public function it_should_call_api_download_archive_url_with_correct_archive_name()
+    public function test_it_should_call_api_download_archive_url_with_correct_archive_name()
     {
         // given
         $this->uploader->shouldReceive('downloadArchiveUrl')->once()->with(
@@ -427,8 +395,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->downloadArchiveUrl(['tag' => 'kitten'], 'kitten_archive');
     }
 
-    /** @test */
-    public function it_should_show_response_when_calling_resources()
+    public function test_it_should_show_response_when_calling_resources()
     {
         // given
         $this->api->shouldReceive('assets')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -437,8 +404,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->assets();
     }
 
-    /** @test */
-    public function it_should_show_response_when_calling_resources_by_ids()
+    public function test_it_should_show_response_when_calling_resources_by_ids()
     {
         $pids = ['pid1', 'pid2'];
 
@@ -451,8 +417,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->assetsByIds($pids, $options);
     }
 
-    /** @test */
-    public function it_should_show_response_when_calling_resources_by_tag()
+    public function test_it_should_show_response_when_calling_resources_by_tag()
     {
         $tag = 'tag';
 
@@ -463,8 +428,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->assetsByTag($tag);
     }
 
-    /** @test */
-    public function it_should_show_response_when_calling_resources_by_moderation()
+    public function test_it_should_show_response_when_calling_resources_by_moderation()
     {
         $kind   = 'manual';
         $status = 'pending';
@@ -476,10 +440,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->assetsByModeration($kind, $status);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_show_list_when_calling_tags()
+    public function test_it_should_show_list_when_calling_tags()
     {
         // given
         $this->api->shouldReceive('tags')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -488,8 +452,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->tags();
     }
 
-    /** @test */
-    public function it_should_show_response_when_calling_resource()
+    public function test_it_should_show_response_when_calling_resource()
     {
         $pid = 'pid';
 
@@ -500,8 +463,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->asset($pid);
     }
 
-    /** @test */
-    public function it_should_update_a_resource_when_calling_update()
+    public function test_it_should_update_a_resource_when_calling_update()
     {
         $pid     = 'pid';
         $options = ['tags' => 'tag1'];
@@ -513,8 +475,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->update($pid, $options);
     }
 
-    /** @test */
-    public function it_should_show_transformations_list_when_calling_transformations()
+    public function test_it_should_show_transformations_list_when_calling_transformations()
     {
         // given
         $this->api->shouldReceive('transformations')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -523,8 +484,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->transformations();
     }
 
-    /** @test */
-    public function it_should_show_one_transformation_when_calling_transformation()
+    public function test_it_should_show_one_transformation_when_calling_transformation()
     {
         $transformation = "c_fill,h_100,w_150";
 
@@ -535,10 +495,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->transformation($transformation);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_delete_a_transformation_when_calling_delete_transformation()
+    public function test_it_should_delete_a_transformation_when_calling_delete_transformation()
     {
         $transformation = "c_fill,h_100,w_150";
 
@@ -549,10 +509,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteTransformation($transformation);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_update_a_transformation_when_calling_update_transformation()
+    public function test_it_should_update_a_transformation_when_calling_update_transformation()
     {
         $transformation = "c_fill,h_100,w_150";
         $updates        = ["allowed_for_strict" => 1];
@@ -564,8 +524,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->updateTransformation($transformation, $updates);
     }
 
-    /** @test */
-    public function it_should_create_a_transformation_when_calling_create_transformation()
+    public function test_it_should_create_a_transformation_when_calling_create_transformation()
     {
         $name       = "name";
         $definition = "c_fill,h_100,w_150";
@@ -577,8 +536,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->createTransformation($name, $definition);
     }
 
-    /** @test */
-    public function it_should_restore_resources_when_calling_restore()
+    public function test_it_should_restore_resources_when_calling_restore()
     {
         $pids = ['pid1', 'pid2'];
 
@@ -589,8 +547,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->restore($pids);
     }
 
-    /** @test */
-    public function it_should_show_upload_mappings_list_when_calling_upload_mappings()
+    public function test_it_should_show_upload_mappings_list_when_calling_upload_mappings()
     {
         // given
         $this->api->shouldReceive('uploadMappings')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -599,8 +556,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->uploadMappings();
     }
 
-    /** @test */
-    public function it_should_upload_mapping_when_calling_upload_mapping()
+    public function test_it_should_upload_mapping_when_calling_upload_mapping()
     {
         $pid = 'pid1';
 
@@ -611,8 +567,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->uploadMapping($pid);
     }
 
-    /** @test */
-    public function it_should_create_upload_mapping_when_calling_create_upload_mapping()
+    public function test_it_should_create_upload_mapping_when_calling_create_upload_mapping()
     {
         $pid = 'pid1';
 
@@ -623,10 +578,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->createUploadMapping($pid);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_delete_upload_mapping_when_calling_delete_upload_mapping()
+    public function test_it_should_delete_upload_mapping_when_calling_delete_upload_mapping()
     {
         $pid = 'pid1';
 
@@ -637,10 +592,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteUploadMapping($pid);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_update_upload_mapping_when_calling_update_upload_mapping()
+    public function test_it_should_update_upload_mapping_when_calling_update_upload_mapping()
     {
         $pid = 'pid1';
 
@@ -651,8 +606,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->updateUploadMapping($pid);
     }
 
-    /** @test */
-    public function it_should_show_upload_presets_list_when_calling_upload_presets()
+    public function test_it_should_show_upload_presets_list_when_calling_upload_presets()
     {
         // given
         $this->api->shouldReceive('uploadPresets')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -662,8 +616,7 @@ class CloudinaryWrapperTest extends TestCase
     }
 
 
-    /** @test */
-    public function it_should_upload_preset_when_calling_upload_preset()
+    public function test_it_should_upload_preset_when_calling_upload_preset()
     {
         $pid = 'pid1';
 
@@ -674,22 +627,18 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->uploadPreset($pid);
     }
 
-    /** @test */
-    public function it_should_create_upload_preset_when_calling_create_upload_preset()
+    public function test_it_should_create_upload_preset_when_calling_create_upload_preset()
     {
         $pid = 'pid1';
 
         // given
-        $this->api->shouldReceive('createUploadPreset')->once()->with($pid)->andReturn(new ApiResponse([], []));
+        $this->api->shouldReceive('createUploadPreset')->once()->with(['name' => $pid])->andReturn(new ApiResponse([], []));
 
         // when
         $this->cloudinary_wrapper->createUploadPreset($pid);
     }
 
-    /** @test
-     * @throws ApiError
-     */
-    public function it_should_delete_upload_preset_when_calling_delete_upload_preset()
+    public function test_it_should_delete_upload_preset_when_calling_delete_upload_preset()
     {
         $pid = 'pid1';
 
@@ -700,10 +649,10 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->deleteUploadPreset($pid);
     }
 
-    /** @test
+    /**
      * @throws ApiError
      */
-    public function it_should_update_upload_preset_when_calling_update_upload_preset()
+    public function test_it_should_update_upload_preset_when_calling_update_upload_preset()
     {
         $pid = 'pid1';
 
@@ -714,8 +663,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->updateUploadPreset($pid);
     }
 
-    /** @test */
-    public function it_should_show_root_folders_list_when_calling_root_folders()
+    public function test_it_should_show_root_folders_list_when_calling_root_folders()
     {
         // given
         $this->api->shouldReceive('rootFolders')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -724,8 +672,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->rootFolders();
     }
 
-    /** @test */
-    public function it_should_subfolders_when_calling_subfolders()
+    public function test_it_should_subfolders_when_calling_subfolders()
     {
         $pid = 'pid1';
 
@@ -736,8 +683,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->subfolders($pid);
     }
 
-    /** @test */
-    public function it_should_show_usage_list_when_calling_usage()
+    public function test_it_should_show_usage_list_when_calling_usage()
     {
         // given
         $this->api->shouldReceive('usage')->once()->with([])->andReturn(new ApiResponse([], []));
@@ -746,8 +692,7 @@ class CloudinaryWrapperTest extends TestCase
         $this->cloudinary_wrapper->usage();
     }
 
-    /** @test */
-    public function it_should_show_ping_list_when_calling_ping()
+    public function test_it_should_show_ping_list_when_calling_ping()
     {
         // given
         $this->api->shouldReceive('ping')->once()->andReturn(new ApiResponse([], []));
