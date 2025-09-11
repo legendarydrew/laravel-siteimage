@@ -20,7 +20,7 @@
   "require": {
     "php": "^8.2",
     "ext-json": "*",
-    "cloudinary/cloudinary_php": "^2.6",
+    "cloudinary/cloudinary_php": "^3",
     "intervention/image": "^2.7",
     "legendarydrew/http-constants": "dev-master"
   },
@@ -28,7 +28,7 @@
     "fakerphp/faker": "^1.18",
     "mmo/faker-images": "^0.9.0",
     "orchestra/testbench": "^9.7",
-    "phpunit/phpunit": "^10",
+    "phpunit/phpunit": "^11",
     "rector/rector": "^2.0"
   },
   "autoload": {
