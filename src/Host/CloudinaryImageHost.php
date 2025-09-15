@@ -7,6 +7,7 @@ namespace PZL\SiteImage\Host;
 
 use Cloudinary\Api\Exception\ApiError;
 use Cloudinary\Api\Exception\GeneralError;
+use Cloudinary\Api\Exception\NotAllowed;
 use Exception;
 use PZL\SiteImage\CloudinaryWrapper;
 use PZL\SiteImage\SiteImageFormat;
@@ -58,7 +59,11 @@ class CloudinaryImageHost extends SiteImageHost
         $not_defined_transformations = array_diff($live_transformations, array_keys($transformations));
         foreach ($not_defined_transformations as $name)
         {
-            $adminApi->deleteTransformation($name);
+            try {
+                $adminApi->deleteTransformation($name);
+            } catch (NotAllowed $exception) {
+                logger()->info("Attempt to remove $name transformation:, {$exception->getMessage()}");
+            }
         }
 
     }
