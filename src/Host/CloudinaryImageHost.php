@@ -44,8 +44,10 @@ class CloudinaryImageHost extends SiteImageHost
             try
             {
                 // Attempt to UPDATE an existing transformation.
-                $settings['allowed_for_strict'] = 1;
-                $adminApi->updateTransformation($name, ['unsafe_update' => $settings]);
+                $adminApi->updateTransformation($name, [
+                    'unsafe_update'      => $settings,
+                    'allowed_for_strict' => 1
+                ]);
             }
             catch (Exception)
             {
@@ -59,9 +61,12 @@ class CloudinaryImageHost extends SiteImageHost
         $not_defined_transformations = array_diff($live_transformations, array_keys($transformations));
         foreach ($not_defined_transformations as $name)
         {
-            try {
+            try
+            {
                 $adminApi->deleteTransformation($name);
-            } catch (NotAllowed $exception) {
+            }
+            catch (NotAllowed $exception)
+            {
                 logger()->info("Attempt to remove $name transformation:, {$exception->getMessage()}");
             }
         }
@@ -78,12 +83,12 @@ class CloudinaryImageHost extends SiteImageHost
     {
         $adminApi        = $this->getCloudinaryWrapper()->getApi();
         $transformations = [];
-        $cursor = null;
+        $cursor          = null;
         do
         {
             $response        = $adminApi->transformations(['cursor' => $cursor, 'max_results' => 100, 'named' => true])->getArrayCopy();
             $transformations = array_merge($transformations, array_map(fn($t) => $t['name'], $response['transformations']));
-            $cursor = $response['next_cursor'] ?? null;
+            $cursor          = $response['next_cursor'] ?? null;
         }
         while ($cursor);
 
