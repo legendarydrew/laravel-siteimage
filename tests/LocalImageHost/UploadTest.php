@@ -6,6 +6,7 @@
 namespace PZL\SiteImage\Tests\LocalImageHost;
 
 use Illuminate\Filesystem\Filesystem;
+use Mmo\Faker\LoremSpaceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\Tests\TestCase;
@@ -37,7 +38,7 @@ class UploadTest extends TestCase
         $fs = new Filesystem();
         $fs->cleanDirectory($this->provider->getFolder());
 
-        $this->image    = $this->faker->picsum();
+        $this->image    = $this->createImage();
         $this->filename = basename($this->image);
     }
 
@@ -78,7 +79,7 @@ class UploadTest extends TestCase
 
     public function testUrl()
     {
-        $this->image = $this->faker->picsum();
+        $this->image = $this->createImage();
         $public_id   = $this->provider->upload($this->image)->public_id;
 
         self::assertFileExists($this->provider->getFolder() . $public_id);

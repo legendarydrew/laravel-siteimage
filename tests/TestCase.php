@@ -5,7 +5,6 @@ namespace PZL\SiteImage\Tests;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
-use Intervention\Image\ImageServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use PZL\SiteImage\Host\LocalImageHost;
 use PZL\SiteImage\SiteImageServiceProvider;
@@ -26,13 +25,16 @@ abstract class TestCase extends BaseTestCase
 
         // Set up image providers for Faker.
         $this->faker->addProvider(new \Mmo\Faker\PicsumProvider($this->faker));
-        $this->faker->addProvider(new \Mmo\Faker\LoremSpaceProvider($this->faker));
-        $this->faker->addProvider(new \Mmo\Faker\FakeimgProvider($this->faker));
 
         // Remove any existing test images.
         $fs       = new Filesystem();
         $provider = new LocalImageHost();
         $fs->cleanDirectory($provider->getFolder());
+    }
+
+    public function createImage()
+    {
+        return $this->faker->picsum(imageExtension: 'jpg');
     }
 
     /**
@@ -93,7 +95,6 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             SiteImageServiceProvider::class,
-            ImageServiceProvider::class
         ];
     }
 

@@ -6,8 +6,9 @@
 namespace PZL\SiteImage\Host;
 
 use Illuminate\Filesystem\Filesystem;
-use Intervention\Image\Exception\NotReadableException;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Drivers\GD\Driver;
+use Intervention\Image\Exceptions\InvalidArgumentException;
+use Intervention\Image\ImageManager;
 use PZL\Http\ResponseCode;
 use PZL\SiteImage\SiteImageFormat;
 use PZL\SiteImage\SiteImageHost;
@@ -22,6 +23,13 @@ class LocalImageHost extends SiteImageHost
 {
     private const TAG_FILE = 'tags.json';
 
+    /**
+     * @param string|null $public_id
+     * @param string|null $transformation
+     * @param string      $format
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public function get(string $public_id = null, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         if ($public_id)
@@ -31,7 +39,7 @@ class LocalImageHost extends SiteImageHost
             {
                 return $this->transform($file, $transformation, $format);
             }
-            catch (NotReadableException)
+            catch (\Exception)
             {
                 // Return the [transformed] placeholder image.
                 return $this->transformPlaceholder($transformation);
@@ -41,17 +49,29 @@ class LocalImageHost extends SiteImageHost
         return $this->transformPlaceholder($transformation);
     }
 
+    /**
+     * @param string $public_id
+     * @return void
+     */
     public function approve(string $public_id): void
     {
         // Nothing to do here: the image has been uploaded.
     }
 
+    /**
+     * @param string $public_id
+     * @return void
+     */
     public function reject(string $public_id): void
     {
         // Delete the image.
         $this->destroy($public_id);
     }
 
+    /**
+     * @param string $public_id
+     * @return bool
+     */
     public function destroy(string $public_id): bool
     {
         $filesystem = new Filesystem();
@@ -62,6 +82,10 @@ class LocalImageHost extends SiteImageHost
         ]);
     }
 
+    /**
+     * @param string|null $tag
+     * @return void
+     */
     public function destroyAll(string $tag = null): void
     {
         if ($tag)
@@ -79,10 +103,21 @@ class LocalImageHost extends SiteImageHost
         }
     }
 
+    /**
+     * @param string      $image_filename
+     * @param string|null $cloud_folder
+     * @param string|null $cloud_name
+     * @param array       $tags
+     * @param array       $transformations
+     * @param array       $parameters
+     * @return SiteImageUploadResponse
+     * @throws InvalidArgumentException
+     */
     public function upload(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = [], array $parameters = []): SiteImageUploadResponse
     {
-        $filename = $this->sanitiseFilename(($cloud_folder ? $cloud_folder . '--' : '') . basename($cloud_name ?? $image_filename));
-        if (($extension = pathinfo($filename, PATHINFO_EXTENSION)) === '' || ($extension = pathinfo($filename, PATHINFO_EXTENSION)) === '0')
+        $filename = $this->sanitiseFilename(($cloud_folder ? $cloud_folder . '--' : '') . pathinfo($cloud_name ?? $image_filename, PATHINFO_BASENAME));
+        $extension = str_replace('.', '', pathinfo($filename, PATHINFO_EXTENSION));
+        if (empty($extension))
         {
             $extension = 'png';
             $filename  .= '.' . $extension;
@@ -95,7 +130,7 @@ class LocalImageHost extends SiteImageHost
         {
             $filename = sprintf(
                 '%s_%s.%s',
-                pathinfo((string) $filename, PATHINFO_FILENAME),
+                pathinfo($filename, PATHINFO_FILENAME),
                 date('Ymdhis'),
                 $extension
             );
@@ -105,8 +140,9 @@ class LocalImageHost extends SiteImageHost
         // - image files;
         // - Base64-encoded data;
         // - image URLs.
-        // TODO resize the image to the maximum defined size.
-        $image = Image::make($image_filename)->save($this->getFolder() . $filename, null, $extension);
+        $manager = ImageManager::usingDriver(Driver::class);
+        $image   = $manager->decode($image_filename)
+                           ->save($this->getFolder() . $filename);
 
         // Add any specified tags.
         $this->setImageTags($filename, $tags);
@@ -125,19 +161,31 @@ class LocalImageHost extends SiteImageHost
             'format'        => $extension,
             'resource_type' => 'image',
             'created_at'    => now()->toISOString(),
-            'bytes'         => $image->filesize(),
+            'bytes'         => $image->count(),
             'type'          => 'upload',
             'url'           => $this->transform($image_filename),
             'secure_url'    => $this->transform($image_filename)
         ]);
     }
 
+    /**
+     * @param string      $image_filename
+     * @param string|null $cloud_folder
+     * @param string|null $cloud_name
+     * @param array       $tags
+     * @param array       $transformations
+     * @return SiteImageUploadResponse
+     * @throws InvalidArgumentException
+     */
     public function uploadForModeration(string $image_filename, string $cloud_folder = null, string $cloud_name = null, array $tags = [], array $transformations = []): SiteImageUploadResponse
     {
-        // TODO perhaps keep a list of images to be moderated.
         return $this->upload($image_filename, $cloud_folder, $cloud_name, $tags, $transformations);
     }
 
+    /**
+     * @param string $tag
+     * @return array
+     */
     public function tagged(string $tag): array
     {
         return $this->getTaggedImages($tag);
@@ -178,11 +226,13 @@ class LocalImageHost extends SiteImageHost
      * Returns the URL of the transformed specified image.
      *
      * @param string|null $transformation
+     * @throws InvalidArgumentException
      */
     protected function transform(string $image_file, string $transformation = null, string $format = SiteImageFormat::JPEG): string
     {
         // Load the image (and check whether it is an image).
-        $image = Image::make($image_file);
+        $manager = ImageManager::usingDriver(Driver::class);
+        $image   = $manager->decode($image_file);
 
         if ($transformation)
         {
@@ -216,6 +266,8 @@ class LocalImageHost extends SiteImageHost
      * Returns the URL of a transformed placeholder image.
      *
      * @param string|null $transformation
+     * @return string
+     * @throws InvalidArgumentException
      */
     protected function transformPlaceholder(string $transformation = null): string
     {
@@ -232,7 +284,7 @@ class LocalImageHost extends SiteImageHost
      * Define tags for the specified image.
      * Tags along with associated image IDs are stored in a JSON file.
      */
-    protected function setImageTags(string $public_id, array $tags)
+    protected function setImageTags(string $public_id, array $tags): void
     {
         $tag_file = $this->getFolder() . self::TAG_FILE;
         $tag_list = file_exists($tag_file) ? json_decode(file_get_contents($tag_file), true) : [];
@@ -270,6 +322,10 @@ class LocalImageHost extends SiteImageHost
         return [];
     }
 
+    /**
+     * @param string $public_id
+     * @return array
+     */
     protected function getImageTags(string $public_id): array
     {
         $tag_list = [];
@@ -289,22 +345,31 @@ class LocalImageHost extends SiteImageHost
         return $tag_list;
     }
 
+    /**
+     * @param bool $with_tags
+     * @return array|SiteImageUploadResponse[]
+     * @throws InvalidArgumentException
+     */
     public function allAssets(bool $with_tags = false): array
     {
         $files = glob($this->getFolder() . '/*.{jpg,png}', GLOB_BRACE);
-        return array_map(function ($row) use ($with_tags): SiteImageUploadResponse
+        return array_map(/**
+         * @throws InvalidArgumentException
+         */ function ($row) use ($with_tags): SiteImageUploadResponse
         {
             $public_id = basename($row);
-            $image     = Image::make($row);
+            $extension = str_replace('.', '', pathinfo($row, PATHINFO_EXTENSION));
+            $manager   = ImageManager::usingDriver(Driver::class);
+            $image     = $manager->decode($row);
             return new SiteImageUploadResponse([
                 'public_id'         => $public_id,
                 'width'             => $image->width(),
                 'height'            => $image->height(),
-                'format'            => $image->extension,
+                'format'            => $extension,
                 'resource_type'     => 'image',
                 'created_at'        => filectime($row),
                 'tags'              => $with_tags ? $this->getImageTags($public_id) : [],
-                'bytes'             => filesize($row),
+                'bytes'             => $image->count(),
                 'type'              => '',
                 'placeholder'       => false,
                 'url'               => $this->get($public_id),
@@ -314,6 +379,12 @@ class LocalImageHost extends SiteImageHost
         }, $files);
     }
 
+    /**
+     * @param string $public_id
+     * @param string $new_public_id
+     * @param bool   $overwrite
+     * @return SiteImageUploadResponse
+     */
     public function rename(string $public_id, string $new_public_id, bool $overwrite = false): SiteImageUploadResponse
     {
         // Check if the image exists.
