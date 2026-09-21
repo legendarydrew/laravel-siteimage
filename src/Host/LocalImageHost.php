@@ -234,6 +234,14 @@ class LocalImageHost extends SiteImageHost
         $manager = ImageManager::usingDriver(Driver::class);
         $image   = $manager->decode($image_file);
 
+        $filename = basename($image_file);
+        $extension = str_replace('.', '', pathinfo($filename, PATHINFO_EXTENSION));
+        if (empty($extension))
+        {
+            $extension = 'png';
+            $filename  .= '.' . $extension;
+        }
+
         if ($transformation)
         {
             // For simplicity, we're only concerned about the width and height of the transformation
@@ -245,7 +253,7 @@ class LocalImageHost extends SiteImageHost
             }
 
             $config      = $transformations[$transformation];
-            $target_file = sprintf('%s%s/%s', $this->getFolder(), $transformation, basename($image_file));
+            $target_file = sprintf('%s%s/%s', $this->getFolder(), $transformation, $filename);
             @mkdir($this->getFolder() . $transformation, 0x755, true);
 
             if (isset($config['width']) || isset($config['height']))
